@@ -2,6 +2,7 @@ import { type ReactNode } from "react";
 import { Route, Switch, useLocation, Router as WouterRouter } from "wouter";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { Footer, Nav, ScrollToHash } from "@/components/site";
+import { PrefsProvider, useRevealEnabled } from "@/components/prefs";
 import Home from "@/pages/home";
 import Work from "@/pages/work";
 import ProjectPage from "@/pages/project";
@@ -12,13 +13,15 @@ function RoutedErrorBoundary({ children }: { children: ReactNode }) {
   return <ErrorBoundary resetKey={location}>{children}</ErrorBoundary>;
 }
 
-function App() {
+function Shell() {
+  useRevealEnabled();
   return (
-    <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+    <>
       <ScrollToHash />
+      <a href="#main" className="skip-link" data-testid="link-skip">Skip to content</a>
       <div className="flex min-h-[100dvh] flex-col">
         <Nav />
-        <div className="flex-1">
+        <main id="main" tabIndex={-1} className="flex-1 outline-none">
           <RoutedErrorBoundary>
             <Switch>
               <Route path="/" component={Home} />
@@ -27,10 +30,20 @@ function App() {
               <Route component={NotFound} />
             </Switch>
           </RoutedErrorBoundary>
-        </div>
+        </main>
         <Footer />
       </div>
-    </WouterRouter>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <PrefsProvider>
+      <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+        <Shell />
+      </WouterRouter>
+    </PrefsProvider>
   );
 }
 

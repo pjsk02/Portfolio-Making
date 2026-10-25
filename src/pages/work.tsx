@@ -12,13 +12,13 @@ export default function Work() {
   const big = list.filter((p) => p.tier !== "archive");
   const archive = list.filter((p) => p.tier === "archive");
   return (
-    <main className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
+    <div className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
       <p className="font-mono text-xs uppercase tracking-[.25em] text-primary">Work · {PROJECTS.length} projects</p>
       <h1 className="font-display mt-4 max-w-4xl text-5xl font-extrabold leading-[.95] md:text-7xl">Everything on the bench, <span className="font-serif font-normal italic text-primary">newest ideas first.</span></h1>
       <div role="group" aria-label="Filter projects" className="mt-10 flex flex-wrap gap-2">
         {THREADS.map((x) => (
           <button key={x} onClick={() => setT(x)} aria-pressed={t === x} data-testid={`button-filter-${x.toLowerCase().replace(/\s/g, "-")}`}
-            className={`min-h-10 rounded-full border px-4 font-mono text-xs uppercase tracking-wider transition-colors ${t === x ? "border-foreground bg-foreground text-background" : "border-foreground/25 hover:border-foreground"}`}>
+            className={`min-h-11 rounded-full border px-4 font-mono text-xs uppercase tracking-wider transition-colors ${t === x ? "border-foreground bg-foreground text-background" : "border-foreground/25 hover:border-foreground"}`}>
             {x}
           </button>
         ))}
@@ -57,6 +57,6 @@ export default function Work() {
           </ul>
         </section>
       )}
-    </main>
+    </div>
   );
 }

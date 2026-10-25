@@ -11,9 +11,9 @@ export default function ProjectPage() {
   const p = PROJECTS[idx];
   const next = PROJECTS[(idx + 1) % PROJECTS.length];
   return (
-    <main>
+    <div>
       <article className="mx-auto max-w-5xl px-5 py-12 md:px-8 md:py-20">
-        <Link href="/work" data-testid="link-back-work" className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary">
+        <Link href="/work" data-testid="link-back-work" className="inline-flex min-h-11 items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-primary">
           <ArrowLeft className="h-4 w-4" /> All work
         </Link>
         <p className="mt-10 font-mono text-xs uppercase tracking-[.25em] text-primary">{p.context}</p>
@@ -28,7 +28,7 @@ export default function ProjectPage() {
             {p.links.map((l, i) => <HoverButton key={l.href} href={l.href} external icon="out" variant={i ? "line" : "solid"} testId={`button-project-link-${i}`}>{l.label}</HoverButton>)}
           </div>
         )}
-        <img src={img(p.cover)} alt={p.coverAlt} className="mt-12 w-full rounded-lg border border-foreground/10" />
+        <img src={img(p.cover)} alt={p.coverAlt} decoding="async" className="mt-12 w-full rounded-lg border border-foreground/10" />
         {p.boundary && (
           <aside className="mt-8 flex gap-3 rounded-lg border-l-4 border-accent bg-secondary/70 p-5" data-testid="text-project-boundary">
             <Info className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
@@ -60,7 +60,7 @@ export default function ProjectPage() {
           </section>
         )}
       </article>
-      <Link href={`/work/${next.slug}`} data-testid="link-next-project" className="group block border-t border-foreground/10 bg-foreground text-background">
+      <Link href={`/work/${next.slug}`} data-testid="link-next-project" className="group block border-t border-foreground/10 bg-ink text-on-ink">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-6 px-5 py-12 md:px-8">
           <div>
             <p className="font-mono text-xs uppercase tracking-widest text-accent">Next project</p>
@@ -69,6 +69,6 @@ export default function ProjectPage() {
           <ArrowRight className="h-8 w-8 transition-transform group-hover:translate-x-2" />
         </div>
       </Link>
-    </main>
+    </div>
   );
 }

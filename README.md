@@ -31,9 +31,15 @@ No backend, API keys, database, or authentication service is required.
 - `public/images/`: original project imagery and portrait.
 - `public/documents/`: public résumé.
 - `index.html`: default metadata.
+- `build/security.ts`: production content policy and header template.
+- `SECURITY.md`: security scope, hosting configuration, and verification.
+- `UX-NOTES.md`: design references, rationale, and measured performance changes.
 
 Contact actions open email or the linked public profiles. There is no
 background message-delivery service.
+The agent workshop is an interactive illustration, not a live AI service.
+Theme and motion preferences are stored locally in the visitor's browser.
+Fonts are self-hosted; there are no analytics or third-party font requests.
 
 The repository's original starter folders may also be present. They are
 preserved rather than deleted; the standalone portfolio commands above run

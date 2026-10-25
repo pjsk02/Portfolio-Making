@@ -37,25 +37,26 @@ function toError(value: unknown): Error {
 
 function DefaultFallback({ error, resetError }: ErrorFallbackProps) {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-6">
+    <div className="min-h-[60dvh] w-full flex items-center justify-center bg-background p-6 text-foreground">
       <div className="max-w-lg w-full text-center">
-        <h1 className="text-xl font-semibold text-gray-900">
+        <p className="font-mono text-xs uppercase tracking-[.25em] text-primary">Station fault</p>
+        <h1 className="font-display mt-3 text-4xl font-extrabold">
           Something went wrong
         </h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-3 text-foreground/80">
           This part of the app hit an error. The rest of the app is still
           running.
         </p>
         {/* Dev only: messages can carry API responses and other internals. */}
         {import.meta.env.DEV ? (
-          <pre className="mt-4 overflow-x-auto rounded bg-gray-100 p-3 text-left text-xs text-gray-800">
+          <pre className="mt-4 overflow-x-auto rounded bg-secondary p-3 text-left text-xs text-foreground">
             {error.message || String(error)}
           </pre>
         ) : null}
         <button
           type="button"
           onClick={resetError}
-          className="mt-4 rounded bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-700"
+          className="mt-6 min-h-11 rounded-full border border-foreground bg-foreground px-6 font-mono text-xs uppercase tracking-widest text-background hover:bg-primary hover:border-primary hover:text-primary-foreground"
         >
           Try again
         </button>
