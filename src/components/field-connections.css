@@ -1,9 +1,8 @@
 /* FieldConnections: scoped to .fc */
 .fc-board { display: grid; gap: 1rem; grid-template-columns: 1fr; position: relative; }
 .fc-center { grid-column: 1 / -1; }
-@media (min-width: 640px) { .fc-cards { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 1024px) {
-  .fc-board { grid-template-columns: 1fr minmax(260px, .9fr) 1fr; grid-template-rows: repeat(3, minmax(176px, auto)); column-gap: 4.5rem; row-gap: 1.25rem; }
+  .fc-board { grid-template-columns: minmax(0, 1fr) minmax(260px, .9fr) minmax(0, 1fr); grid-template-rows: repeat(3, minmax(176px, auto)); column-gap: clamp(1.5rem, 4vw, 4.5rem); row-gap: 1.25rem; }
   .fc-cards { display: contents; }
   .fc-card[data-slot="0"] { grid-column: 1; grid-row: 1; }
   .fc-card[data-slot="1"] { grid-column: 1; grid-row: 2; }

@@ -1,6 +1,7 @@
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ArrowRight, Info } from "lucide-react";
 import { HoverButton, Reveal } from "@/components/site";
+import { ResponsiveImage } from "@/components/responsive-image";
 import { PROJECTS, img } from "@/data";
 import NotFound from "@/pages/not-found";
 
@@ -17,9 +18,9 @@ export default function ProjectPage() {
           <ArrowLeft className="h-4 w-4" /> All work
         </Link>
         <p className="mt-10 font-mono text-xs uppercase tracking-[.25em] text-primary">{p.context}</p>
-        <h1 className="font-display mt-3 text-5xl font-extrabold leading-[.95] md:text-7xl" data-testid="text-project-title">{p.title}</h1>
+        <h1 className="responsive-title font-display mt-3 font-extrabold leading-[.95]" data-testid="text-project-title">{p.title}</h1>
         <p className="mt-3 font-serif text-2xl italic text-primary md:text-3xl">{p.line}</p>
-        <p className="mt-6 max-w-2xl text-xl leading-relaxed text-foreground/80">{p.short}</p>
+        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-foreground/80 md:text-xl">{p.short}</p>
         <div className="mt-6 flex flex-wrap gap-2">
           {p.stack.map((s) => <span key={s} className="rounded-full border border-foreground/20 px-3 py-1 font-mono text-[11px] uppercase tracking-wider">{s}</span>)}
         </div>
@@ -28,7 +29,7 @@ export default function ProjectPage() {
             {p.links.map((l, i) => <HoverButton key={l.href} href={l.href} external icon="out" variant={i ? "line" : "solid"} testId={`button-project-link-${i}`}>{l.label}</HoverButton>)}
           </div>
         )}
-        <img src={img(p.cover)} alt={p.coverAlt} decoding="async" className="mt-12 w-full rounded-lg border border-foreground/10" />
+        <ResponsiveImage file={p.cover} alt={p.coverAlt} sizes="(min-width: 1024px) 960px, (min-width: 768px) calc(100vw - 64px), calc(100vw - 40px)" loading="eager" className="mt-12 w-full rounded-lg border border-foreground/10" />
         {p.boundary && (
           <aside className="mt-8 flex gap-3 rounded-lg border-l-4 border-accent bg-secondary/70 p-5" data-testid="text-project-boundary">
             <Info className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
@@ -62,11 +63,11 @@ export default function ProjectPage() {
       </article>
       <Link href={`/work/${next.slug}`} data-testid="link-next-project" className="group block border-t border-foreground/10 bg-ink text-on-ink">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-6 px-5 py-12 md:px-8">
-          <div>
+          <div className="min-w-0">
             <p className="font-mono text-xs uppercase tracking-widest text-accent">Next project</p>
             <p className="font-display mt-2 text-3xl font-bold md:text-5xl">{next.title}</p>
           </div>
-          <ArrowRight className="h-8 w-8 transition-transform group-hover:translate-x-2" />
+          <ArrowRight className="h-8 w-8 shrink-0 transition-transform group-hover:translate-x-2" />
         </div>
       </Link>
     </div>

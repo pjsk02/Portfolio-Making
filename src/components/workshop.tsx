@@ -38,7 +38,7 @@ export function AgentWorkshop() {
         <MotionButton testId="button-workshop-motion" />
       </div>
 
-      <div className="grid md:grid-cols-[1.35fr_1fr]">
+      <div className="workshop-grid grid md:grid-cols-[1.35fr_1fr]">
         <div className="relative bg-secondary/50 p-3 md:p-6">
           <svg ref={svgRef} viewBox="0 0 640 360" className="workshop h-auto w-full" role="img" aria-labelledby={`${uid}t ${uid}d`} data-stage={s.k} data-review={review ? "on" : "off"}>
             <title id={`${uid}t`}>Agent workshop illustration</title>
@@ -130,7 +130,7 @@ export function AgentWorkshop() {
           </svg>
         </div>
 
-        <div className="flex flex-col gap-6 border-t border-foreground/10 p-5 md:border-l md:border-t-0 md:p-7">
+        <div className="workshop-controls flex flex-col gap-6 border-t border-foreground/10 p-5 md:border-l md:border-t-0 md:p-7">
           <fieldset>
             <legend className="font-mono text-[11px] uppercase tracking-[.2em] text-primary">Turn Je's dial</legend>
             {/* WebKit can clear :focus-visible after native radio arrow changes.

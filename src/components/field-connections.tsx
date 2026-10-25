@@ -95,11 +95,11 @@ export function FieldConnections() {
   }, [sel]);
 
   return (
-    <section ref={ref} id="connections" aria-labelledby="connections-h" className="fc mx-auto max-w-7xl scroll-mt-16 px-5 py-24 md:px-8 md:py-32">
+    <section ref={ref} id="connections" aria-labelledby="connections-h" className="fc responsive-section mx-auto max-w-7xl scroll-mt-16 px-5 py-24 md:px-8 md:py-32">
       <div className="grid gap-6 md:grid-cols-2 md:items-end">
         <div>
           <p className="font-mono text-xs uppercase tracking-[.25em] text-primary">Connected fields</p>
-          <h2 id="connections-h" className="font-display mt-4 text-4xl font-bold md:text-6xl">One person, <span className="font-serif font-normal italic">six wires.</span></h2>
+          <h2 id="connections-h" className="responsive-heading font-display mt-4 text-4xl font-bold md:text-6xl">One person, <span className="font-serif font-normal italic">six wires.</span></h2>
         </div>
         <div className="max-w-lg">
           <p className="text-lg leading-relaxed text-foreground/80">The same habit runs through every field: find where the data comes from and who is waiting on it. Pick a field to trace its wire back to the evidence.</p>

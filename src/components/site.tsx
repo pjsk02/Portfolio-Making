@@ -42,7 +42,7 @@ export function HoverButton({ children, href, external, download, variant = "sol
       </span>
     </>
   );
-  const cls = `group relative inline-flex min-h-12 items-center justify-center overflow-hidden rounded-full border pl-9 pr-6 py-3 font-mono text-[13px] uppercase tracking-wider active:scale-[.97] transition-transform ${base}`;
+  const cls = `hover-button group relative inline-flex min-h-12 items-center justify-center overflow-hidden rounded-full border pl-9 pr-6 py-3 font-mono text-[13px] uppercase tracking-wider active:scale-[.97] transition-transform ${base}`;
   if (external || download) {
     return <a data-testid={testId} href={href} className={cls} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})} {...(download ? { download: "Je-Sai-Kailash-Pulipati-Resume.pdf" } : {})}>{inner}</a>;
   }
@@ -141,7 +141,7 @@ export function Footer() {
   ];
   return (
     <footer className="border-t border-foreground/10">
-      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-8">
+      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-10 md:px-8 lg:flex-row lg:items-center lg:justify-between">
         <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Je Sai Kailash Pulipati · Data & AI Engineer</p>
         <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
           {links.map((l) => (

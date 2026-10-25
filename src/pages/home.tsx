@@ -5,6 +5,7 @@ import { Ambient, HoverButton, Reveal } from "@/components/site";
 import { RagDiagram } from "@/components/rag-diagram";
 import { AgentWorkshop } from "@/components/workshop";
 import { FieldConnections } from "@/components/field-connections";
+import { ResponsiveImage } from "@/components/responsive-image";
 import { CONTACT, EXPERIENCE, PAPERS, PROJECTS, RESUME, img } from "@/data";
 
 const CHAPTERS = [
@@ -33,7 +34,7 @@ const ROUTE = [
 
 function NextCue({ href, label, testId }: { href: string; label: string; testId: string }) {
   return (
-    <a href={href} data-testid={testId} className="group mt-16 flex min-h-11 items-center gap-4 border-t border-foreground/15 pt-6 font-mono text-xs uppercase tracking-[.2em] text-foreground/75 hover:text-primary">
+    <a href={href} data-testid={testId} className="next-cue group mt-16 flex min-h-11 items-center gap-4 border-t border-foreground/15 pt-6 font-mono text-xs uppercase tracking-[.2em] text-foreground/75 hover:text-primary">
       <span className="text-primary">Next</span>
       <span className="h-px flex-1 bg-foreground/15" aria-hidden />
       <span>{label}</span>
@@ -76,20 +77,21 @@ function Story() {
     };
   }, []);
   return (
-    <section id="story" aria-labelledby="story-h" className="mx-auto max-w-7xl scroll-mt-20 px-5 py-24 md:px-8 md:py-32">
+    <section id="story" aria-labelledby="story-h" className="responsive-section mx-auto max-w-7xl scroll-mt-20 px-5 py-24 md:px-8 md:py-32">
       <Reveal>
         <p className="font-mono text-xs uppercase tracking-[.25em] text-primary">The line, station by station</p>
-        <h2 id="story-h" className="font-display mt-4 max-w-3xl text-4xl font-bold md:text-6xl">Five stations. Each one changed <span className="font-serif font-normal italic">what I build.</span></h2>
+        <h2 id="story-h" className="responsive-heading font-display mt-4 max-w-3xl text-4xl font-bold md:text-6xl">Five stations. Each one changed <span className="font-serif font-normal italic">what I build.</span></h2>
       </Reveal>
-      <div className="mt-16 grid gap-10 md:grid-cols-[220px_1fr] md:gap-14">
-        <aside className="hidden md:block" aria-label="Stations">
+      <div className="story-layout mt-16 grid gap-10 md:grid-cols-[220px_1fr] md:gap-14">
+        <aside className="story-index min-w-0" aria-label="Stations">
+          <p className="mb-3 font-mono text-[11px] uppercase tracking-widest text-muted-foreground lg:hidden">Jump to a station</p>
           <ol className="sticky top-28 space-y-1">
             {CHAPTERS.map((c, i) => (
               <li key={c.n}>
-                <a href={`#${c.id}`} data-testid={`link-station-${c.n}`} aria-current={i === active ? "step" : undefined}
+                <a href={`#${c.id}`} data-testid={`link-station-${c.n}`} aria-label={`${c.n} · ${c.place}`} aria-current={i === active ? "step" : undefined}
                   className={`flex min-h-11 items-center gap-3 font-mono text-[11px] uppercase tracking-widest transition-colors ${i === active ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
-                  <span className={`h-px transition-[width] duration-500 ${i === active ? "w-8 bg-accent" : "w-3 bg-foreground/30"}`} aria-hidden />
-                  {c.n} {c.place}
+                  <span className={`station-mark h-px transition-[width] duration-500 ${i === active ? "w-8 bg-accent" : "w-3 bg-foreground/30"}`} aria-hidden />
+                  <span>{c.n}</span><span className="station-place">{c.place}</span>
                 </a>
               </li>
             ))}
@@ -109,7 +111,7 @@ function Story() {
                 {c.n === "03" && <div><a href="#rag" data-testid="link-story-rag" className="mt-5 inline-flex min-h-11 items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary hover:underline">Jump to the case <ArrowDown className="h-3.5 w-3.5" aria-hidden /></a></div>}
                 {c.n === "05" && (
                   <figure className="mt-6 max-w-xl">
-                    <img src={img("xiuWhxxcqu2iekfpMQyPLV8Cw-7ab020c1b1b4dcbf.jpeg")} alt="The MedFind team at The Open Accelerator Hackathon with their certificate and prizes" width={1280} height={708} className="h-auto w-full rounded-lg" loading="lazy" decoding="async" />
+                    <ResponsiveImage file="xiuWhxxcqu2iekfpMQyPLV8Cw-7ab020c1b1b4dcbf.jpeg" alt="The MedFind team at The Open Accelerator Hackathon with their certificate and prizes" sizes="(min-width: 640px) 576px, calc(100vw - 76px)" className="h-auto w-full rounded-lg" />
                     <figcaption className="mt-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">MedFind team, The Open Accelerator Hackathon.</figcaption>
                   </figure>
                 )}
@@ -136,7 +138,7 @@ export default function Home() {
       {/* HERO */}
       <section aria-labelledby="hero-h" className="relative overflow-hidden border-b border-foreground/10">
         <Ambient />
-        <div className="relative mx-auto grid max-w-7xl gap-12 px-5 pb-14 pt-14 md:grid-cols-[1.45fr_1fr] md:px-8 md:pb-20 md:pt-20">
+        <div className="hero-layout relative mx-auto grid max-w-7xl gap-12 px-5 pb-14 pt-14 md:grid-cols-[1.45fr_1fr] md:px-8 md:pb-20 md:pt-20">
           <div className="hero-in">
             <p className="font-mono text-xs uppercase tracking-[.25em] text-primary">Je Sai Kailash Pulipati · Data & AI Engineer</p>
             <h1 id="hero-h" className="font-display mt-6 text-[clamp(2.7rem,7.6vw,6.6rem)] font-extrabold leading-[.92]">
@@ -158,7 +160,7 @@ export default function Home() {
           </div>
           <div className="hero-in hero-in-2 relative mx-auto w-full max-w-sm self-start md:mt-4">
             <div className="absolute -inset-3 rotate-2 rounded-lg bg-accent" aria-hidden />
-            <img src={img("je-portrait.webp")} srcSet={`${img("je-portrait-small.webp")} 480w, ${img("je-portrait.webp")} 960w`} sizes="(min-width: 768px) 384px, 90vw"
+            <img src={img("je-portrait.webp")} srcSet={`${img("je-portrait-small.webp")} 480w, ${img("je-portrait-medium.webp")} 720w, ${img("je-portrait.webp")} 960w`} sizes="(min-width: 1053px) 384px, (min-width: 768px) calc((100vw - 112px) / 2.45), (min-width: 424px) 384px, calc(100vw - 40px)"
               width={800} height={1000} loading="eager" fetchPriority="high" decoding="async"
               alt="Je Sai Kailash Pulipati standing under a pine tree, arms crossed" className="portrait relative aspect-[4/5] w-full rounded-lg object-cover" data-testid="img-portrait" />
             <p className="relative mt-4 font-mono text-[11px] uppercase tracking-widest text-accent-foreground">Fig. 1 · The engineer, off shift.</p>
@@ -188,11 +190,11 @@ export default function Home() {
 
       {/* RAG CASE */}
       <section id="rag" aria-labelledby="rag-h" className="scroll-mt-16 border-y border-foreground/10 bg-secondary/60">
-        <div className="mx-auto max-w-7xl px-5 py-24 md:px-8 md:py-32">
+        <div className="responsive-section mx-auto max-w-7xl px-5 py-24 md:px-8 md:py-32">
           <Reveal className="grid gap-10 md:grid-cols-[1fr_1.1fr]">
             <div>
               <p className="font-mono text-xs uppercase tracking-[.25em] text-primary">Case 00 · Stealth startup · Anonymized</p>
-              <h2 id="rag-h" className="font-display mt-4 text-4xl font-bold md:text-6xl">From months of data preparation <span className="font-serif font-normal italic text-primary">to days.</span></h2>
+              <h2 id="rag-h" className="responsive-heading font-display mt-4 text-4xl font-bold md:text-6xl">From months of data preparation <span className="font-serif font-normal italic text-primary">to days.</span></h2>
             </div>
             <div className="space-y-5 text-lg leading-relaxed text-foreground/85 md:pt-10">
               <p>For a stealth startup, I built a multimodal hybrid RAG pipeline that made information across text, images and tables retrievable for users and agents.</p>
@@ -206,11 +208,11 @@ export default function Home() {
       </section>
 
       {/* WORKSHOP */}
-      <section id="workshop" aria-labelledby="workshop-h" className="mx-auto max-w-7xl scroll-mt-16 px-5 py-24 md:px-8 md:py-32">
+      <section id="workshop" aria-labelledby="workshop-h" className="responsive-section mx-auto max-w-7xl scroll-mt-16 px-5 py-24 md:px-8 md:py-32">
         <Reveal className="grid gap-6 md:grid-cols-[1fr_1fr] md:items-end">
           <div>
             <p className="font-mono text-xs uppercase tracking-[.25em] text-primary">The workshop</p>
-            <h2 id="workshop-h" className="font-display mt-4 text-4xl font-bold md:text-6xl">Small agents, <span className="font-serif font-normal italic">narrow jobs.</span></h2>
+            <h2 id="workshop-h" className="responsive-heading font-display mt-4 text-4xl font-bold md:text-6xl">Small agents, <span className="font-serif font-normal italic">narrow jobs.</span></h2>
           </div>
           <p className="max-w-lg text-lg leading-relaxed text-foreground/80">A production line works when each station does one thing and passes on something checkable. This sketch applies the same idea to agents. Turn the dial to see who does what.</p>
         </Reveal>
@@ -221,11 +223,11 @@ export default function Home() {
       <FieldConnections />
 
       {/* WORK */}
-      <section id="work" aria-labelledby="work-h" className="mx-auto max-w-7xl scroll-mt-16 px-5 pb-24 md:px-8 md:pb-32">
+      <section id="work" aria-labelledby="work-h" className="responsive-tail mx-auto max-w-7xl scroll-mt-16 px-5 pb-24 md:px-8 md:pb-32">
         <Reveal className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="font-mono text-xs uppercase tracking-[.25em] text-primary">Selected work</p>
-            <h2 id="work-h" className="font-display mt-4 text-4xl font-bold md:text-6xl">Systems with a point of view.</h2>
+            <h2 id="work-h" className="responsive-heading font-display mt-4 text-4xl font-bold md:text-6xl">Systems with a point of view.</h2>
           </div>
           <HoverButton href="/work" variant="line" testId="button-all-work">{`All ${PROJECTS.length} projects`}</HoverButton>
         </Reveal>
@@ -234,7 +236,7 @@ export default function Home() {
             <Reveal key={p.slug}>
               <Link href={`/work/${p.slug}`} data-testid={`card-lead-${p.slug}`} className={`group grid items-center gap-8 md:grid-cols-2 ${i % 2 ? "md:[&>*:first-child]:order-2" : ""}`}>
                 <div className="overflow-hidden rounded-lg border border-foreground/10">
-                  <img src={img(p.cover)} alt={p.coverAlt} loading="lazy" decoding="async" className="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+                  <ResponsiveImage file={p.cover} alt={p.coverAlt} sizes="(min-width: 1280px) 592px, (min-width: 768px) calc((100vw - 96px) / 2), calc(100vw - 40px)" className="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
                 </div>
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{p.context}</p>
@@ -250,12 +252,12 @@ export default function Home() {
             </Reveal>
           ))}
         </div>
-        <div className="mt-24 grid gap-x-8 gap-y-12 md:grid-cols-6">
+        <div className="home-features mt-24 grid gap-x-8 gap-y-12 md:grid-cols-6">
           {features.map((p, i) => (
             <Reveal key={p.slug} delay={(i % 3) * 80} className={i % 5 === 0 ? "md:col-span-4" : i % 5 === 1 ? "md:col-span-2" : "md:col-span-3"}>
               <Link href={`/work/${p.slug}`} data-testid={`card-feature-${p.slug}`} className="group block">
                 <div className="overflow-hidden rounded-lg border border-foreground/10 bg-card">
-                  <img src={img(p.cover)} alt={p.coverAlt} loading="lazy" decoding="async" className="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+                  <ResponsiveImage file={p.cover} alt={p.coverAlt} sizes={`(min-width: 1280px) ${i % 5 === 0 ? 800 : i % 5 === 1 ? 384 : 592}px, (min-width: 1024px) calc((100vw - ${i % 5 === 0 ? 80 : i % 5 === 1 ? 128 : 96}px) / ${i % 5 === 0 ? 1.5 : i % 5 === 1 ? 3 : 2}), (min-width: 768px) calc((100vw - 96px) / 2), (min-width: 640px) calc((100vw - 72px) / 2), calc(100vw - 40px)`} className="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
                 </div>
                 <div className="mt-4 flex items-baseline justify-between gap-4">
                   <h3 className="font-display text-2xl font-bold">{p.title}</h3>
@@ -270,10 +272,10 @@ export default function Home() {
 
       {/* EXPERIENCE */}
       <section id="experience" aria-labelledby="exp-h" className="scroll-mt-16 bg-ink text-on-ink">
-        <div className="mx-auto max-w-7xl px-5 py-24 md:px-8 md:py-28">
+        <div className="responsive-section mx-auto max-w-7xl px-5 py-24 md:px-8 md:py-28">
           <Reveal>
             <p className="font-mono text-xs uppercase tracking-[.25em] text-accent">For the skimmers</p>
-            <h2 id="exp-h" className="font-display mt-4 text-4xl font-bold md:text-6xl">The shift log.</h2>
+            <h2 id="exp-h" className="responsive-heading font-display mt-4 text-4xl font-bold md:text-6xl">The shift log.</h2>
           </Reveal>
           <div className="mt-12 divide-y divide-on-ink/15 border-y border-on-ink/15">
             {EXPERIENCE.map((e) => (
@@ -293,7 +295,7 @@ export default function Home() {
       </section>
 
       {/* RESEARCH */}
-      <section id="research" aria-labelledby="research-h" className="mx-auto max-w-7xl scroll-mt-16 px-5 py-24 md:px-8 md:py-28">
+      <section id="research" aria-labelledby="research-h" className="responsive-section mx-auto max-w-7xl scroll-mt-16 px-5 py-24 md:px-8 md:py-28">
         <Reveal className="grid gap-10 md:grid-cols-[1fr_2fr]">
           <div>
             <p className="font-mono text-xs uppercase tracking-[.25em] text-primary">Research</p>
@@ -317,7 +319,7 @@ export default function Home() {
       {/* CONTACT */}
       <section id="contact" aria-labelledby="contact-h" className="relative scroll-mt-16 overflow-hidden border-t border-foreground/10">
         <Ambient />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 py-24 md:grid-cols-[minmax(0,1fr)_260px] md:gap-10 md:px-8 md:py-32 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="responsive-section relative mx-auto grid max-w-7xl items-center gap-14 px-5 py-24 md:grid-cols-[minmax(0,1fr)_260px] md:gap-10 md:px-8 md:py-32 lg:grid-cols-[minmax(0,1fr)_300px]">
           <Reveal className="min-w-0">
             <p className="font-mono text-xs uppercase tracking-[.25em] text-primary">End of the line. Or the next station.</p>
             <h2 id="contact-h" className="font-display mt-4 max-w-4xl text-[clamp(2.5rem,6vw,5rem)] font-extrabold leading-[.95]">Have data nobody can find? <span className="font-serif font-normal italic text-primary">Let's talk.</span></h2>

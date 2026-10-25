@@ -21,7 +21,7 @@ export function RagDiagram() {
   const k = STEPS[step].k;
   return (
     <div className="rounded-xl bg-ink p-5 text-on-ink md:p-8" data-testid="diagram-rag">
-      <div className="grid grid-cols-1 items-center gap-4 md:grid-cols-[1fr_auto_1.2fr_auto_1fr_auto_1fr]" aria-hidden>
+      <div className="rag-flow" aria-hidden>
         <div className="grid gap-2">
           <Node icon={FileText} label="Text" active={k === "sources"} />
           <Node icon={Image} label="Images" active={k === "sources"} />
@@ -32,7 +32,7 @@ export function RagDiagram() {
           <Node icon={Boxes} label="Vector index" active={k === "index"} />
           <Node icon={Share2} label="Graphify knowledge graph" active={k === "index"} />
         </div>
-        <Arrow />
+        <Arrow rowBreak />
         <Node icon={ScanSearch} label="Multimodal LLM-guided retrieval" active={k === "retrieve"} />
         <Arrow />
         <div className="grid gap-2">
@@ -41,10 +41,10 @@ export function RagDiagram() {
         </div>
       </div>
       <div className="mt-8 border-t border-on-ink/15 pt-6">
-        <div role="group" aria-label="Pipeline stages" className="flex flex-wrap gap-2">
+        <div role="group" aria-label="Pipeline stages" className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
           {STEPS.map((s, i) => (
             <button key={s.k} type="button" aria-pressed={i === step} data-testid={`button-rag-step-${s.k}`} onClick={() => setStep(i)}
-              className={`min-h-11 rounded-full border px-4 font-mono text-[11px] uppercase tracking-wider transition-colors ${i === step ? "border-accent bg-accent text-accent-foreground" : "border-on-ink/30 text-on-ink/85 hover:border-on-ink/70"}`}>
+               className={`min-h-11 rounded-full border px-2 py-2 font-mono text-[11px] uppercase tracking-wider transition-colors sm:px-4 ${i === step ? "border-accent bg-accent text-accent-foreground" : "border-on-ink/30 text-on-ink/85 hover:border-on-ink/70"}`}>
               {String(i + 1).padStart(2, "0")} {s.label}
             </button>
           ))}
@@ -56,9 +56,9 @@ export function RagDiagram() {
   );
 }
 
-function Arrow() {
+function Arrow({ rowBreak = false }: { rowBreak?: boolean }) {
   return (
-    <svg className="mx-auto h-8 w-8 rotate-90 text-accent md:h-6 md:w-10 md:rotate-0" viewBox="0 0 40 24" aria-hidden>
+    <svg className={`mx-auto h-8 w-8 rotate-90 text-accent sm:h-6 sm:w-10 sm:rotate-0 ${rowBreak ? "rag-row-break" : ""}`} viewBox="0 0 40 24" aria-hidden>
       <line x1="0" y1="12" x2="32" y2="12" stroke="currentColor" strokeWidth="2" strokeDasharray="4 6" />
       <path d="M30 6 L38 12 L30 18" fill="none" stroke="currentColor" strokeWidth="2" />
     </svg>
