@@ -1,4 +1,5 @@
-export const BASE = import.meta.env.BASE_URL;
+// Node-based publishing checks also read this content; only Vite supplies env.
+export const BASE = import.meta.env?.BASE_URL ?? "/";
 export const img = (f: string) => `${BASE}images/${f}`;
 export const RESUME = `${BASE}documents/je-kailash-resume.pdf`;
 

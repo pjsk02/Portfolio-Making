@@ -3,6 +3,7 @@ import { Route, Switch, useLocation, Router as WouterRouter } from "wouter";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { Footer, Nav, ScrollToHash } from "@/components/site";
 import { PrefsProvider, useRevealEnabled } from "@/components/prefs";
+import { PageMetadata } from "@/components/page-metadata";
 import Home from "@/pages/home";
 import Work from "@/pages/work";
 import ProjectPage from "@/pages/project";
@@ -17,6 +18,7 @@ function Shell() {
   useRevealEnabled();
   return (
     <>
+      <PageMetadata />
       <ScrollToHash />
       <a href="#main" className="skip-link" data-testid="link-skip">Skip to content</a>
       <div className="flex min-h-[100dvh] flex-col">

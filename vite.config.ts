@@ -4,11 +4,12 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import { portfolioSecurity } from "./build/security";
+import { portfolioPublishing } from "./build/publishing";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   base: process.env.BASE_PATH || "/",
-  plugins: [react(), tailwindcss(), portfolioSecurity()],
+  plugins: [react(), tailwindcss(), portfolioSecurity(), portfolioPublishing()],
   resolve: { alias: { "@": path.join(root, "src") } },
   server: {
     host: "0.0.0.0",

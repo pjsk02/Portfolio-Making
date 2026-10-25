@@ -26,6 +26,8 @@ export const responseHeaders = {
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
   "X-Frame-Options": "SAMEORIGIN",
+  // Do not preload or include subdomains: the portfolio does not own their TLS.
+  "Strict-Transport-Security": "max-age=31536000",
 };
 
 export function portfolioSecurity(): Plugin {

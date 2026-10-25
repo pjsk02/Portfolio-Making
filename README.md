@@ -16,6 +16,7 @@ pnpm dev
 
 ```sh
 pnpm typecheck
+pnpm test:publishing
 pnpm build
 pnpm preview
 ```
@@ -24,6 +25,12 @@ The production site is generated in `dist/`. Serve it with an SPA fallback
 to `index.html` so direct links to project pages work.
 For a subdirectory deployment, set `BASE_PATH` when building.
 No backend, API keys, database, or authentication service is required.
+The included `.replit` selects static hosting with real response headers and
+explicit project-page rewrites. It does not run the Vite development server.
+See `PUBLISHING.md` before a release: `publishing.json` must use a verified
+production URL, never a guessed domain or the development preview.
+Until that URL is known, absolute social and canonical URLs are intentionally
+omitted rather than pointing visitors to the wrong site.
 
 ## Edit the site
 
@@ -32,6 +39,9 @@ No backend, API keys, database, or authentication service is required.
 - `public/documents/`: public résumé.
 - `index.html`: default metadata.
 - `build/security.ts`: production content policy and header template.
+- `build/publishing.ts`: crawler-visible route metadata and Replit hosting rules.
+- `publishing.json`: the verified production origin, initially unset.
+- `PUBLISHING.md`: release steps, boundaries, and live verification.
 - `SECURITY.md`: security scope, hosting configuration, and verification.
 - `UX-NOTES.md`: design references, rationale, and measured performance changes.
 

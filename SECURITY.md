@@ -30,7 +30,11 @@ standalone portfolio export or required to serve the portfolio.
 The build emits `_headers` for hosts that document support for that format,
 including Netlify and Cloudflare Pages. **Replit static publishing does not read
 that file**: configure the equivalent response headers in its deployment
-settings / `[[deployment.responseHeaders]]` configuration.
+settings / `[[deployment.responseHeaders]]` configuration. Those entries are
+now configured in the workspace `.replit` and in the standalone export's
+generated static `.replit`. The portfolio artifact also declares production
+response headers on its static service. See `PUBLISHING.md` for host scope,
+the URL gate, review boundaries, and live checks.
 
 The exact values are exported as `responseHeaders` in `build/security.ts`:
 
@@ -39,6 +43,7 @@ The exact values are exported as `responseHeaders` in `build/security.ts`:
 - `Referrer-Policy: strict-origin-when-cross-origin`
 - `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()`
 - `X-Frame-Options: SAMEORIGIN`
+- `Strict-Transport-Security: max-age=31536000` (no subdomain/preload commitment)
 
 The HTML policy works independently of hosting support, except that browsers
 require **HTTP headers** for frame-ancestor protection, MIME-sniffing protection,
@@ -51,9 +56,12 @@ https://docs.replit.com/features/deployment-customization/static-deployments-adv
 
 ## Verification
 
-Run `pnpm exec tsc --noEmit`, `pnpm build`, and a current dependency audit before a
-release. Inspect the generated `dist/index.html` policy and the published
-document's HTTP headers. Recheck direct project-page links and the résumé.
+Run `pnpm typecheck`, `pnpm test:publishing`, `pnpm build`, and a current
+dependency audit before a release in the standalone export (use the portfolio
+workspace filter here). Inspect the generated `dist/index.html` policy
+(`dist/public/index.html` in the workspace). After an approved publish,
+`pnpm verify:published` checks real HTTP headers, direct project links,
+metadata, HTTPS, the share image, assets, and the résumé.
 Development preview headers and development-tool traffic are not evidence of
 production configuration.
 
@@ -79,3 +87,12 @@ compressed bodies; it is not needed by the portfolio.
 The production build and generated policy were checked locally. Published
 HTTP headers, TLS configuration, and hosting access controls were **not**
 verified; they require a separate check against the actual published site.
+
+### Publishing preparation on October 25, 2026
+
+The header and routing configurations have passed the platform's schema
+validation. A build-time metadata pipeline and a read-only live verifier are
+included. The deployment service reports no active deployment or production
+URL, so live TLS/headers/routing and absolute social URLs remain **unverified**.
+No publish or merge is authorized by this preparation. These changes do not
+constitute a new security-scan result.
