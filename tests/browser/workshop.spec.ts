@@ -1,6 +1,6 @@
 import { test, expect, openPage, expectFocusRing, seedPreferences } from "./fixtures";
 
-test("native workshop radios and human review work with Tab, arrows, Space, and Enter", { tag: "@compatibility" }, async ({ page }) => {
+test("native workshop radios and human review work with Tab, arrows, Space, and Enter", { tag: "@compatibility" }, async ({ page, browserName }) => {
   await seedPreferences(page, { "je-motion": "paused" });
   await openPage(page, "./#workshop");
   const workshop = page.getByTestId("workshop");
@@ -19,16 +19,14 @@ test("native workshop radios and human review work with Tab, arrows, Space, and 
   const brief = workshop.getByRole("radio", { name: "Brief", exact: true });
   await expect(brief).toBeFocused();
   await expect(brief).toBeChecked();
-  const stages = [
-    { key: "ArrowRight", stage: "read", label: "Read", agent: "Reader" },
-    { key: "ArrowDown", stage: "link", label: "Link", agent: "Linker" },
-    { key: "ArrowRight", stage: "check", label: "Check", agent: "Checker" },
-    { key: "ArrowDown", stage: "brief", label: "Brief", agent: "Je, at the console" },
-    { key: "ArrowLeft", stage: "check", label: "Check", agent: "Checker" },
-    { key: "ArrowUp", stage: "link", label: "Link", agent: "Linker" },
-    { key: "ArrowRight", stage: "check", label: "Check", agent: "Checker" },
-  ];
-  for (const { key, stage, label, agent } of stages) {
+  const states = {
+    brief: { label: "Brief", agent: "Je, at the console" },
+    read: { label: "Read", agent: "Reader" },
+    link: { label: "Link", agent: "Linker" },
+    check: { label: "Check", agent: "Checker" },
+  } as const;
+  const pressStage = (key: string, stage: keyof typeof states) => test.step(`${key} selects ${stage}`, async () => {
+    const { label, agent } = states[stage];
     await page.keyboard.press(key);
     const radio = workshop.getByRole("radio", { name: label, exact: true });
     await expect(radio).toBeFocused();
@@ -40,9 +38,29 @@ test("native workshop radios and human review work with Tab, arrows, Space, and 
     const labelElement = radio.locator("..");
     await expectFocusRing(radio, labelElement);
     expect((await labelElement.boundingBox())!.height).toBeGreaterThanOrEqual(44);
-  }
-  // Space selects a focused native radio without a custom key handler. Return
-  // to Check with an arrow so Tab/Shift+Tab must use the group's checked member.
+  });
+  const forwardToCheck = async () => {
+    await pressStage("ArrowRight", "read");
+    await pressStage("ArrowRight", "link");
+    await pressStage("ArrowRight", "check");
+  };
+  await pressStage("ArrowRight", "read");
+  await pressStage("ArrowDown", "link");
+  await pressStage("ArrowRight", "check");
+  await pressStage("ArrowLeft", "link");
+  await pressStage("ArrowUp", "read");
+  await pressStage("ArrowLeft", "brief");
+
+  // Native WebKit clamps at the group boundaries; Chromium/Firefox wrap.
+  // Assert both outcomes precisely instead of skipping an engine or adding
+  // application key handlers to impose another browser's native behavior.
+  await pressStage("ArrowLeft", browserName === "webkit" ? "brief" : "check");
+  if (browserName === "webkit") await forwardToCheck();
+  await pressStage("ArrowDown", browserName === "webkit" ? "check" : "brief");
+  if (browserName !== "webkit") await forwardToCheck();
+
+  // Brief is unchecked in every engine here. Space must really select it,
+  // rather than merely leave an already-selected radio checked.
   await brief.focus();
   await page.keyboard.press("Space");
   await expect(brief).toBeChecked();
@@ -50,9 +68,7 @@ test("native workshop radios and human review work with Tab, arrows, Space, and 
   await expect(page.getByTestId("text-workshop-explain")).toContainText("Je, at the console");
   await expect(workshop.locator('input[type="radio"]:checked')).toHaveCount(1);
   await expectFocusRing(brief, brief.locator(".."));
-  await page.keyboard.press("ArrowLeft");
-  await expect(workshop.getByRole("radio", { name: "Check", exact: true })).toBeChecked();
-  await expect(illustration).toHaveAttribute("data-stage", "check");
+  await forwardToCheck();
   await expect(page.getByTestId("text-workshop-explain")).toHaveAttribute("aria-live", "polite");
   await page.keyboard.press("Tab");
   const review = workshop.getByRole("switch", { name: "Human review" });

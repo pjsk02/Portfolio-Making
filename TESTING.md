@@ -84,7 +84,7 @@ The tests do not need secrets, an API server, real user data, or external sites.
 | `public/preferences.js` | Executes the real file in Node's VM before React: light/dark OS defaults; saved theme before preview before OS; invalid/empty values; absent `matchMedia`; blocked storage access and reads; saved pause and OS reduced-motion precedence. |
 | `src/components/prefs.tsx` | Live OS theme changes before/after explicit saved or in-visit choices; preview choice is not saved; reload persistence; blocked storage reads, writes, and property access; all motion switches stay synchronized; reduced motion never overwrites user intent. |
 | `src/components/site.tsx` | Theme button keyboard operation and accessible state; disabled motion switch under OS reduction; skip link; mobile-menu Escape and focus restoration; same-hash repeat clicks; native anchors; cross-route navigation; initial/encoded/bad hashes; Back/Forward; actual scroll destination below the sticky header; smooth versus instant scrolling. |
-| `src/components/workshop.tsx` | Tab into/out of a shared-name native radio group, all arrow directions and wraparound, Space selection, exactly one checked radio, visible focus on the label, 44px labels, live explanatory text and SVG state; review switch with Space/Enter; interactions still work while paused. |
+| `src/components/workshop.tsx` | Tab into/out of a shared-name native radio group, all arrow directions and engine-native boundary behavior, Space selection, exactly one checked radio, visible focus on the label, 44px labels, live explanatory text and SVG state; review switch with Space/Enter; interactions still work while paused. |
 | Motion and mobile delivery | Actual CSS animation pause/resume, offscreen observer behavior, hidden-tab event handling, immediate reveal visibility under reduced motion, and no horizontal overflow at the workshop. |
 
 ### Engine matrix
@@ -98,7 +98,7 @@ The tests do not need secrets, an API server, real user data, or external sites.
 The focused tag covers live OS theme changes, saved light/dark precedence and
 reloads, keyboard theme selection/focus, shared saved motion switches, OS reduced
 motion with/without saved intent, native workshop radio navigation, review-switch
-Space/Enter activation, focus-visible rings, skip links, menu Escape, and the
+Space/Enter activation, visible focus rings, skip links, menu Escape, and the
 entire anchor/hash navigation suite (including Back/Forward and smooth/instant
 scrolling). These are the **same assertions** used in Chromium, not duplicated
 smoke tests. Broader invalid/blocked-storage, preview-only theme, and synthetic
@@ -109,6 +109,11 @@ WebKit can clear `:focus-visible` during native arrow-key selection. The shared
 assertions require actual focus plus a visible, solid, nontransparent ring at
 least two pixels wide, rather than requiring one engine's focus heuristic.
 Native Tab/arrow/Space behavior is unchanged; there are no custom key handlers.
+At radio-group boundaries, Chromium/Firefox wrap and the tested WebKit engine
+stays on the first/last member. Both are asserted explicitly, including focus,
+selection, explanation, and illustration state. This matches WebKit's
+[native radio traversal](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/html/RadioInputType.cpp),
+which does not loop back through the group; no compatibility scenario is skipped.
 
 Only the menu-specific scenario is skipped on desktop, where that menu
 intentionally does not exist; there are no Firefox/WebKit-specific skips or
