@@ -1,0 +1,51 @@
+/* Small-screen layout overrides, without hiding overflowing page content. */
+#mobile-nav {
+  max-height: calc(100vh - 65px);
+  max-height: calc(100dvh - 65px - env(safe-area-inset-bottom, 0px));
+  overscroll-behavior: contain;
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+}
+.responsive-title { font-size: clamp(2.35rem, 6.5vw, 4.5rem); overflow-wrap: anywhere; }
+.rag-flow { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: 1rem; }
+@media (min-width: 640px) and (max-width: 1279px) {
+  .rag-flow { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
+  .rag-row-break { display: none; }
+}
+@media (min-width: 1280px) {
+  .rag-flow { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.2fr) auto minmax(0, 1fr) auto minmax(0, 1fr); }
+}
+@media (max-width: 1023px) {
+  .responsive-section { padding-block: 4rem; }
+  .responsive-tail { padding-bottom: 4rem; }
+  .responsive-heading { font-size: clamp(2rem, 4.7vw, 3rem); }
+  .hero-layout { padding-block: 3rem; }
+  .story-layout { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; margin-top: 2rem; }
+  .story-index ol { position: static; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .5rem; }
+  .story-index li { margin-block: 0; }
+  .story-index a { justify-content: center; border: 1px solid hsl(var(--foreground) / .2); border-radius: .5rem; }
+  .story-index a[aria-current] { border-color: hsl(var(--accent)); background: hsl(var(--secondary)); }
+  .story-index .station-mark, .story-index .station-place { display: none; }
+  .story-layout > ol > li { padding-left: 2rem; padding-bottom: 3.5rem; }
+  .story-layout > ol > li:last-child { padding-bottom: 0; }
+  .workshop-grid { grid-template-columns: minmax(0, 1fr); }
+  .workshop-controls { border-left-width: 0; border-top-width: 1px; }
+}
+@media (min-width: 640px) and (max-width: 1023px) {
+  .responsive-section { padding-block: 5rem; }
+  .responsive-tail { padding-bottom: 5rem; }
+  .hero-layout { padding-block: 3.5rem; }
+  .home-features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-features > div { grid-column: auto; min-width: 0; }
+}
+@media (max-width: 639px) {
+  .work-archive a { grid-template-columns: 3.5rem minmax(0, 1fr) 1.25rem; gap: .75rem; }
+  .next-cue { column-gap: .75rem; }
+  .next-cue > span:last-of-type { max-width: 65%; text-align: right; }
+}
+/* Reset Tailwind 4's independent translate/scale properties on touch devices. */
+@media (hover: none) {
+  .hover-button > span:nth-child(2) { opacity: 1; translate: none; }
+  .hover-button > span:last-child { display: none; }
+  .hover-button > span:first-child { scale: 1; }
+  .group img { scale: 1; }
+}

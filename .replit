@@ -1,20 +1,145 @@
+# Static portfolio only; no API or development server is published.
 modules = ["nodejs-24"]
 
 [deployment]
-router = "application"
-deploymentTarget = "autoscale"
+deploymentTarget = "static"
+build = ["pnpm", "build"]
+publicDir = "dist"
 
-[deployment.postBuild]
-args = ["pnpm", "store", "prune"]
-env = { "CI" = "true" }
+[[deployment.responseHeaders]]
+path = "/*"
+name = "Content-Security-Policy"
+value = "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'none'; media-src 'none'; worker-src 'none'; form-action 'none'; upgrade-insecure-requests; frame-ancestors 'self'"
 
-[workflows]
-runButton = "Project"
+[[deployment.responseHeaders]]
+path = "/*"
+name = "X-Content-Type-Options"
+value = "nosniff"
 
-[agent]
-stack = "PNPM_WORKSPACE"
-expertMode = true
+[[deployment.responseHeaders]]
+path = "/*"
+name = "Referrer-Policy"
+value = "strict-origin-when-cross-origin"
 
-[postMerge]
-path = "scripts/post-merge.sh"
-timeoutMs = 20000
+[[deployment.responseHeaders]]
+path = "/*"
+name = "Permissions-Policy"
+value = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+
+[[deployment.responseHeaders]]
+path = "/*"
+name = "X-Frame-Options"
+value = "SAMEORIGIN"
+
+[[deployment.responseHeaders]]
+path = "/*"
+name = "Strict-Transport-Security"
+value = "max-age=31536000"
+
+[[deployment.rewrites]]
+from = "/work"
+to = "/work/index.html"
+
+[[deployment.rewrites]]
+from = "/work/"
+to = "/work/index.html"
+
+[[deployment.rewrites]]
+from = "/work/medfind"
+to = "/work/medfind/index.html"
+
+[[deployment.rewrites]]
+from = "/work/medfind/"
+to = "/work/medfind/index.html"
+
+[[deployment.rewrites]]
+from = "/work/tripsync-ai"
+to = "/work/tripsync-ai/index.html"
+
+[[deployment.rewrites]]
+from = "/work/tripsync-ai/"
+to = "/work/tripsync-ai/index.html"
+
+[[deployment.rewrites]]
+from = "/work/endoseg"
+to = "/work/endoseg/index.html"
+
+[[deployment.rewrites]]
+from = "/work/endoseg/"
+to = "/work/endoseg/index.html"
+
+[[deployment.rewrites]]
+from = "/work/momcart"
+to = "/work/momcart/index.html"
+
+[[deployment.rewrites]]
+from = "/work/momcart/"
+to = "/work/momcart/index.html"
+
+[[deployment.rewrites]]
+from = "/work/solarsketch"
+to = "/work/solarsketch/index.html"
+
+[[deployment.rewrites]]
+from = "/work/solarsketch/"
+to = "/work/solarsketch/index.html"
+
+[[deployment.rewrites]]
+from = "/work/langup"
+to = "/work/langup/index.html"
+
+[[deployment.rewrites]]
+from = "/work/langup/"
+to = "/work/langup/index.html"
+
+[[deployment.rewrites]]
+from = "/work/energy-cto"
+to = "/work/energy-cto/index.html"
+
+[[deployment.rewrites]]
+from = "/work/energy-cto/"
+to = "/work/energy-cto/index.html"
+
+[[deployment.rewrites]]
+from = "/work/sec-pipeline"
+to = "/work/sec-pipeline/index.html"
+
+[[deployment.rewrites]]
+from = "/work/sec-pipeline/"
+to = "/work/sec-pipeline/index.html"
+
+[[deployment.rewrites]]
+from = "/work/food-inspections"
+to = "/work/food-inspections/index.html"
+
+[[deployment.rewrites]]
+from = "/work/food-inspections/"
+to = "/work/food-inspections/index.html"
+
+[[deployment.rewrites]]
+from = "/work/imdb-bi"
+to = "/work/imdb-bi/index.html"
+
+[[deployment.rewrites]]
+from = "/work/imdb-bi/"
+to = "/work/imdb-bi/index.html"
+
+[[deployment.rewrites]]
+from = "/work/nypd-analysis"
+to = "/work/nypd-analysis/index.html"
+
+[[deployment.rewrites]]
+from = "/work/nypd-analysis/"
+to = "/work/nypd-analysis/index.html"
+
+[[deployment.rewrites]]
+from = "/work/airline-system"
+to = "/work/airline-system/index.html"
+
+[[deployment.rewrites]]
+from = "/work/airline-system/"
+to = "/work/airline-system/index.html"
+
+[[deployment.rewrites]]
+from = "/*"
+to = "/index.html"
