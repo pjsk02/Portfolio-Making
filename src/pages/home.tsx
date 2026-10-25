@@ -214,7 +214,7 @@ export default function Home() {
             <p className="font-mono text-xs uppercase tracking-[.25em] text-primary">The workshop</p>
             <h2 id="workshop-h" className="responsive-heading font-display mt-4 text-4xl font-bold md:text-6xl">Small agents, <span className="font-serif font-normal italic">narrow jobs.</span></h2>
           </div>
-          <p className="max-w-lg text-lg leading-relaxed text-foreground/80">A production line works when each station does one thing and passes on something checkable. This sketch applies the same idea to agents. Turn the dial to see who does what.</p>
+          <p className="max-w-lg text-lg leading-relaxed text-foreground/80">A production line works when each station does one thing and passes on something checkable. This sketch applies the same idea to agents. Click an agent or its line, or turn the dial, to see who does what.</p>
         </Reveal>
         <Reveal className="mt-12"><AgentWorkshop /></Reveal>
         <NextCue href="#connections" label="How the work connects" testId="link-next-connections" />

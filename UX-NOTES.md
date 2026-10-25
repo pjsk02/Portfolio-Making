@@ -79,6 +79,21 @@ https://docs.google.com/document/d/e/2PACX-1vTnLEdwSF1HPkuwOkuNneXGCaQAw5N2nnRf7
   explicit choice. Storage failures are handled without breaking the page.
 - Native radio controls, a review switch, a skip link, visible focus indicators,
   44px controls, and direct section links support keyboard navigation.
+- Workshop agents, their names, and console cables select the same stage as the
+  native radios. Cable hit areas are continuous and stay 24 CSS pixels wide as
+  the drawing scales; narrow centerline targets sit above that padding to keep
+  neighboring cables selectable. Agent body/name targets avoid the conveyor and
+  floor. The review-return control exists only while its line is visible, and
+  selects Check without toggling review.
+- Touch selection uses the original pointer position, not the browser's adjusted
+  compatibility-click location: mobile tap assistance must not turn the space
+  between an agent and its name into another button. Keyboard and assistive
+  activation still use the named controls directly.
+- The interactive SVG is an accessible group rather than a flattened image.
+  Its named stage buttons expose pressed state, support Enter/Space, and show
+  geometry-shaped focus rings. Brief still highlights all agents without
+  marking an individual agent selected; the existing polite live explanation
+  announces selections. Diagram input never changes review or motion settings.
 - Initial deep links jump to their destination; smooth scrolling is reserved
   for visitor-initiated navigation when motion is enabled.
 - Chapter navigation tracks a reading line below the sticky header, not which

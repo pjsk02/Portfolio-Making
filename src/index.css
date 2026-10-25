@@ -317,6 +317,24 @@ body { background: hsl(var(--background)); transition: background-color .3s ease
 
 /* ---------- Workshop illustration ---------- */
 .workshop { --w-ink: hsl(var(--foreground)); overflow: visible; }
+.workshop .ws-target, .workshop .ws-cable-hit { cursor: pointer; touch-action: manipulation; }
+.workshop .ws-target { outline: none; } /* Use geometry-shaped keyboard rings, not SVG bounding boxes. */
+.workshop .ws-agent-hit { fill: transparent; stroke: transparent; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.workshop .ws-agent > .bob, .workshop .ws-tag { pointer-events: none; }
+.workshop .ws-tag { user-select: none; }
+.workshop .ws-agent:focus-visible .ws-agent-hit { stroke: hsl(var(--ring)); }
+.workshop .ws-cable-hit, .workshop .ws-cable-core { fill: none; stroke: transparent; stroke-linecap: round; vector-effect: non-scaling-stroke; pointer-events: stroke; }
+.workshop .ws-cable-hit { stroke-width: 24; }
+.workshop .ws-cable-core { stroke-width: 3; }
+.workshop .ws-cable-stroke, .workshop .ws-cable-focus { pointer-events: none; }
+.workshop .ws-cable-focus { fill: none; stroke: hsl(var(--ring)); stroke-width: 5; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: 0; }
+.workshop .ws-cable-target:focus-visible .ws-cable-focus { opacity: 1; }
+@media (hover: hover) {
+  .workshop .ws-agent:hover .ws-agent-hit { fill: hsl(var(--primary) / .06); }
+  .workshop .ws-agent:hover > .bob { opacity: 1; }
+  .workshop .ws-cable-hit:hover { stroke: hsl(var(--foreground) / .08); }
+  .workshop .ws-cable-target:hover .ws-cable-stroke { stroke: hsl(var(--foreground)); }
+}
 .workshop .ws-line { stroke: hsl(var(--foreground) / .35); }
 .workshop .ws-belt { fill: hsl(var(--foreground) / .14); }
 .workshop .ws-roller { fill: hsl(var(--foreground) / .35); }

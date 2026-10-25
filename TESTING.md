@@ -84,7 +84,7 @@ The tests do not need secrets, an API server, real user data, or external sites.
 | `public/preferences.js` | Executes the real file in Node's VM before React: light/dark OS defaults; saved theme before preview before OS; invalid/empty values; absent `matchMedia`; blocked storage access and reads; saved pause and OS reduced-motion precedence. |
 | `src/components/prefs.tsx` | Live OS theme changes before/after explicit saved or in-visit choices; preview choice is not saved; reload persistence; blocked storage reads, writes, and property access; all motion switches stay synchronized; reduced motion never overwrites user intent. |
 | `src/components/site.tsx` | Theme button keyboard operation and accessible state; disabled motion switch under OS reduction; skip link; mobile-menu Escape and focus restoration; same-hash repeat clicks; native anchors; cross-route navigation; initial/encoded/bad hashes; Back/Forward; actual scroll destination below the sticky header; smooth versus instant scrolling. |
-| `src/components/workshop.tsx` | Tab into/out of a shared-name native radio group, all arrow directions and engine-native boundary behavior, Space selection, exactly one checked radio, visible focus on the label, 44px labels, live explanatory text and SVG state; review switch with Space/Enter; interactions still work while paused. |
+| `src/components/workshop.tsx` | Tab into/out of a shared-name native radio group, all arrow directions and engine-native boundary behavior, Space selection, exactly one checked radio, visible focus on the label, and 44px labels; SVG buttons' accessible names, pressed state, Tab order, Enter/Space and shaped focus rings; live text, console, agent and cable highlights stay synchronized, including Brief. Real mouse/touch input on all agent bodies, names, multiple cable segments, dash gaps and widened targets; visible review return, hidden-path noninterference, and noninteractive floor/conveyor. Review and motion preferences remain unchanged with motion running, paused or system-reduced. |
 | Motion and mobile delivery | Actual CSS animation pause/resume, offscreen observer behavior, hidden-tab event handling, immediate reveal visibility under reduced motion, and no horizontal overflow at the workshop. |
 
 ### Engine matrix
@@ -129,6 +129,12 @@ viewport width and theme; they are not iPhone/iPad hardware, touch, browser-chro
 OS keyboard-navigation settings, or VoiceOver tests. Firefox coverage likewise
 uses Playwright's patched desktop Firefox, not Firefox for Android.
 
+Workshop hit tests use real SVG-to-screen coordinates and mouse clicks on desktop,
+touchscreen taps at mobile widths, not dispatched click events or bounding-box
+centers for curved paths. Shared cable origins and exact crossings cannot
+represent two targets at the same pixel; separate segments and dash gaps are
+tested, including the narrow-mobile layout.
+
 The visibility test supplies the browser's `visibilitychange` event and hidden
 property deterministically; it verifies the real provider/CSS response, not
 whether a particular headless window manager backgrounds a tab. This is not a
@@ -146,8 +152,8 @@ Budgets sum **all** emitted JS/CSS, including `preferences.js` and font CSS:
 
 | Asset type | Raw cap | Gzip cap |
 | --- | ---: | ---: |
-| JavaScript | 285,000 bytes | 90,000 bytes |
-| CSS | 51,000 bytes | 11,000 bytes |
+| JavaScript | 290,000 bytes | 92,000 bytes |
+| CSS | 52,000 bytes | 11,000 bytes |
 
 These leave small bundler headroom around the existing approximately 87.2 kB
 JavaScript / 9.8 kB CSS compressed entry bundles. Do not raise them just to make

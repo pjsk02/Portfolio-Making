@@ -58,8 +58,8 @@ export async function checkBuild(directory) {
   // Caps allow small bundler variation around the documented ~87.2/9.8 kB gzip
   // entry baseline; increasing them requires an explicit performance decision.
   const budgets = {
-    js: { raw: 285_000, gzip: 90_000 },
-    css: { raw: 51_000, gzip: 11_000 },
+    js: { raw: 290_000, gzip: 92_000 }, // Raised once for the interactive workshop and share metadata.
+    css: { raw: 52_000, gzip: 11_000 },
   };
   for (const [extension, budget] of Object.entries(budgets)) {
     const assets = files.filter((file) => file.endsWith(`.${extension}`));
