@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { ArrowRight, ArrowUpRight, Download, Menu, Moon, Pause, Play, Sun, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Download, Menu, Moon, Sun, X } from "lucide-react";
 import { CONTACT, RESUME } from "@/data";
 import { observe, useActiveWhileVisible, usePrefs } from "@/components/prefs";
 
@@ -52,6 +52,7 @@ export function HoverButton({ children, href, external, download, variant = "sol
 const NAV = [
   { label: "Story", href: "/#story" },
   { label: "Workshop", href: "/#workshop" },
+  { label: "Connections", href: "/#connections" },
   { label: "Work", href: "/work" },
   { label: "Research", href: "/#research" },
   { label: "Contact", href: "/#contact" },
@@ -69,16 +70,18 @@ export function ThemeButton({ testId }: { testId: string }) {
   );
 }
 
-export function MotionButton({ testId, withLabel = false }: { testId: string; withLabel?: boolean }) {
+export function MotionButton({ testId }: { testId: string; withLabel?: boolean }) {
   const { motion, systemReduced, toggleMotion } = usePrefs();
   const paused = systemReduced || motion === "paused";
-  const label = systemReduced ? "Motion reduced by your system setting" : paused ? "Animation paused. Resume animation" : "Animation playing. Pause animation";
+  const label = systemReduced ? "Decorative animations off: your device requests reduced motion" : "Decorative animations";
   return (
-    <button type="button" onClick={systemReduced ? undefined : toggleMotion} aria-disabled={systemReduced} aria-pressed={systemReduced ? undefined : paused}
-      data-testid={testId} aria-label={label} title={label}
-      className={`inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-full border border-foreground/20 px-3 font-mono text-[11px] uppercase tracking-widest transition-colors ${systemReduced ? "cursor-not-allowed opacity-70" : "hover:border-foreground"}`}>
-      {paused ? <Play className="h-4 w-4" aria-hidden /> : <Pause className="h-4 w-4" aria-hidden />}
-      {withLabel && <span>{systemReduced ? "Motion: system off" : paused ? "Motion paused" : "Pause motion"}</span>}
+    <button type="button" role="switch" aria-checked={!paused} onClick={toggleMotion} disabled={systemReduced}
+      data-testid={testId} aria-label={label} title={systemReduced ? label : "Turns decorative motion on or off across the site. Interactive controls still work."}
+      className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2.5 rounded-full border border-foreground/20 px-3 font-mono text-[10px] uppercase tracking-wider transition-colors hover:border-foreground disabled:cursor-not-allowed disabled:opacity-70">
+      <span>Animations {systemReduced ? "off · system" : paused ? "off" : "on"}</span>
+      <span className={`relative h-5 w-8 rounded-full ${paused ? "bg-foreground/25" : "bg-primary"}`} aria-hidden>
+        <span className={`absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-background transition-transform ${paused ? "" : "translate-x-3"}`} />
+      </span>
     </button>
   );
 }
@@ -110,7 +113,6 @@ export function Nav() {
           </a>
         </nav>
         <div className="flex items-center gap-2">
-          <MotionButton testId="button-motion" />
           <ThemeButton testId="button-theme" />
           <button ref={btn} type="button" data-testid="button-menu" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} aria-controls="mobile-nav" onClick={() => setOpen(!open)} className="grid h-11 w-11 place-items-center rounded-full border border-foreground/20 lg:hidden">
             {open ? <X className="h-5 w-5" aria-hidden /> : <Menu className="h-5 w-5" aria-hidden />}
@@ -184,6 +186,12 @@ export function ScrollToHash() {
     return undefined;
   }, [loc]);
   useEffect(() => {
+    let frame = 0;
+    const scheduleFocus = (id: string, animate = false) => {
+      window.cancelAnimationFrame(frame);
+      // Let the mobile menu close before measuring the anchor position.
+      frame = window.requestAnimationFrame(() => focusTarget(id, animate));
+    };
     const onClick = (e: MouseEvent) => {
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const a = (e.target as Element | null)?.closest?.("a[href*='#']") as HTMLAnchorElement | null;
@@ -194,14 +202,19 @@ export function ScrollToHash() {
       if (!document.getElementById(id)) return;
       e.preventDefault();
       if (window.location.hash !== url.hash) history.pushState(null, "", url.hash);
-      focusTarget(id);
+      scheduleFocus(id, true);
     };
     document.addEventListener("click", onClick, true);
-    const onHashChange = () => focusTarget(decodeHash(window.location.hash), false);
+    const onHashChange = () => {
+      if (window.location.hash) scheduleFocus(decodeHash(window.location.hash));
+    };
     window.addEventListener("hashchange", onHashChange);
+    window.addEventListener("popstate", onHashChange);
     return () => {
+      window.cancelAnimationFrame(frame);
       document.removeEventListener("click", onClick, true);
       window.removeEventListener("hashchange", onHashChange);
+      window.removeEventListener("popstate", onHashChange);
     };
   }, []);
   return null;

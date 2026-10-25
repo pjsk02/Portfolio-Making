@@ -48,6 +48,14 @@ not measured claims of improved engagement or hiring conversion.
   model for this portfolio. The inspected first-load capture was still in an
   intro state; it was not a full interaction or resource-usage evaluation.
   https://bruno-simon.com/
+- **Blai:** the public source identifies Framer. The connected feature area
+  combines layered image assets with curved SVG paths; its entrance
+  definitions animate opacity and position. The portfolio borrows the
+  clarity of connected cards, not the crypto branding or claims. Its
+  new map links six fields to actual experience and project evidence.
+  The reference also includes a canvas element; that is deliberately not
+  reproduced here.
+  https://blaiapp.io/
 
 The supplied “AI slop” document is useful as a craft checklist: avoid fabricated
 proof, inconsistent spacing, unrelated effects, weak contrast, and incomplete
@@ -63,14 +71,23 @@ https://docs.google.com/document/d/e/2PACX-1vTnLEdwSF1HPkuwOkuNneXGCaQAw5N2nnRf7
 - Continuous motion uses small SVG elements and CSS transforms/opacity.
   There is no WebGL scene, video background, animation library, or per-frame
   JavaScript simulation.
-- The visible pause control stops decorative motion and reveal transitions.
-  System reduced-motion preferences take priority.
+- Labelled “Animations on/off” switches beside the workshop, connections map,
+  and in the footer stop decorative motion and reveal transitions. They replace
+  the ambiguous header playback icon. Interactive controls still work when
+  animation is off. System reduced-motion preferences take priority.
 - Theme preferences follow the operating system until the visitor makes an
   explicit choice. Storage failures are handled without breaking the page.
 - Native radio controls, a review switch, a skip link, visible focus indicators,
   44px controls, and direct section links support keyboard navigation.
 - Initial deep links jump to their destination; smooth scrolling is reserved
   for visitor-initiated navigation when motion is enabled.
+- Chapter navigation tracks a reading line below the sticky header, not which
+  items happen to intersect the viewport. This prevents the following chapter
+  from overriding the chosen one. Mobile menus close before an anchor's
+  position is measured; hash navigation also responds to browser Back/Forward.
+- Both original portraits are used: one in the introduction and one in the
+  closing contact section. They use lightweight entrance motion, not generated
+  face animation or video.
 - Core text/background token pairs were checked in both themes and exceed
   4.5:1 contrast. This is not a claim of full WCAG certification.
 
@@ -84,15 +101,19 @@ Primary guidance:
 
 | Asset | Previous | Updated |
 | --- | ---: | ---: |
-| CSS, production build | 255.39 kB | about 44 kB |
-| CSS, gzip | 35.73 kB | about 8.7 kB |
-| JavaScript, gzip | 77.81 kB | about 84 kB |
+| CSS, production build | 255.39 kB | about 48.4 kB |
+| CSS, gzip | 35.73 kB | about 9.8 kB |
+| JavaScript, gzip | 77.81 kB | about 87.2 kB |
 | Hero portrait, original | 1,189,233 bytes | preserved as source only |
 | Hero portrait, desktop WebP | — | 236,586 bytes |
 | Hero portrait, mobile WebP | — | 72,184 bytes |
+| Closing portrait, desktop WebP | 405,120 bytes source | 20,708 bytes |
+| Closing portrait, mobile WebP | — | 7,092 bytes |
 
-The extra interface behavior adds about 6 kB of compressed JavaScript.
-CSS is about 83% smaller uncompressed; portrait downloads are about 80–94%
+The extra interface behavior adds about 9.4 kB of compressed JavaScript
+relative to the original baseline, including about 3.1 kB for the latest
+connections and navigation changes. No animation package was added.
+CSS is about 81% smaller uncompressed; hero portrait downloads are about 80–94%
 smaller. Portrait grayscale is baked into the images instead of applied as
 a runtime filter. Font files are self-hosted with their licenses.
 
@@ -100,3 +121,15 @@ Build sizes and image sizes are measured, but whole-tab RAM, FPS on physical
 devices, and conversion rates have not been benchmarked. Smaller assets and
 paused offscreen work reduce overhead; they cannot guarantee zero lag on
 every device.
+
+## Link-check scope
+
+The GitHub profile, four project repositories, and the Energy CTO demo all
+returned HTTP 200 without changing to a different destination. The résumé
+is a real PDF rather than an application fallback page.
+
+LinkedIn, Google Scholar, and all four IEEE links reject automated requests
+(999, 403, and 418 respectively). These URLs match the supplied portfolio,
+but their live destinations could not be independently confirmed in this
+environment. They are not labelled broken or replaced with guessed URLs.
+Email links open the visitor's mail application; no test email is sent.

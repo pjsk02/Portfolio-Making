@@ -4,7 +4,7 @@ import { ArrowDown, ArrowUpRight, Mail } from "lucide-react";
 import { Ambient, HoverButton, Reveal } from "@/components/site";
 import { RagDiagram } from "@/components/rag-diagram";
 import { AgentWorkshop } from "@/components/workshop";
-import { observe } from "@/components/prefs";
+import { FieldConnections } from "@/components/field-connections";
 import { CONTACT, EXPERIENCE, PAPERS, PROJECTS, RESUME, img } from "@/data";
 
 const CHAPTERS = [
@@ -46,8 +46,34 @@ function Story() {
   const [active, setActive] = useState(0);
   const refs = useRef<(HTMLLIElement | null)[]>([]);
   useEffect(() => {
-    const stops = refs.current.map((el, i) => (el ? observe(el, (v) => { if (v) setActive(i); }) : () => {}));
-    return () => stops.forEach((s) => s());
+    let frame = 0;
+    let readingLine = 112;
+    const update = () => {
+      frame = 0;
+      let current = 0;
+      // Visibility is for reveals, not navigation: several chapters can be
+      // visible at once. Select the last heading to cross the reading line.
+      refs.current.forEach((el, i) => {
+        if (el && el.getBoundingClientRect().top <= readingLine) current = i;
+      });
+      setActive(current);
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    const measure = () => {
+      const first = refs.current[0];
+      readingLine = (first ? Number.parseFloat(getComputedStyle(first).scrollMarginTop) || 96 : 96) + 16;
+      onScroll();
+    };
+    measure();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", measure);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", measure);
+    };
   }, []);
   return (
     <section id="story" aria-labelledby="story-h" className="mx-auto max-w-7xl scroll-mt-20 px-5 py-24 md:px-8 md:py-32">
@@ -83,7 +109,7 @@ function Story() {
                 {c.n === "03" && <div><a href="#rag" data-testid="link-story-rag" className="mt-5 inline-flex min-h-11 items-center gap-2 font-mono text-xs uppercase tracking-widest text-primary hover:underline">Jump to the case <ArrowDown className="h-3.5 w-3.5" aria-hidden /></a></div>}
                 {c.n === "05" && (
                   <figure className="mt-6 max-w-xl">
-                    <img src={img("xiuWhxxcqu2iekfpMQyPLV8Cw-7ab020c1b1b4dcbf.jpeg")} alt="The MedFind team at The Open Accelerator Hackathon with their certificate and prizes" className="w-full rounded-lg" loading="lazy" decoding="async" />
+                    <img src={img("xiuWhxxcqu2iekfpMQyPLV8Cw-7ab020c1b1b4dcbf.jpeg")} alt="The MedFind team at The Open Accelerator Hackathon with their certificate and prizes" width={1280} height={708} className="h-auto w-full rounded-lg" loading="lazy" decoding="async" />
                     <figcaption className="mt-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">MedFind team, The Open Accelerator Hackathon.</figcaption>
                   </figure>
                 )}
@@ -189,8 +215,10 @@ export default function Home() {
           <p className="max-w-lg text-lg leading-relaxed text-foreground/80">A production line works when each station does one thing and passes on something checkable. This sketch applies the same idea to agents. Turn the dial to see who does what.</p>
         </Reveal>
         <Reveal className="mt-12"><AgentWorkshop /></Reveal>
-        <NextCue href="#work" label="Selected work" testId="link-next-work" />
+        <NextCue href="#connections" label="How the work connects" testId="link-next-connections" />
       </section>
+
+      <FieldConnections />
 
       {/* WORK */}
       <section id="work" aria-labelledby="work-h" className="mx-auto max-w-7xl scroll-mt-16 px-5 pb-24 md:px-8 md:pb-32">
@@ -249,11 +277,11 @@ export default function Home() {
           </Reveal>
           <div className="mt-12 divide-y divide-on-ink/15 border-y border-on-ink/15">
             {EXPERIENCE.map((e) => (
-              <Reveal key={e.org} className="grid gap-4 py-8 md:grid-cols-[1fr_2fr]">
+              <Reveal key={e.org} className="grid gap-6 py-8 md:grid-cols-[1fr_2fr] md:gap-10">
                 <div>
-                  <p className="font-display text-2xl font-bold">{e.org}</p>
-                  <p className="font-mono text-xs uppercase tracking-widest text-accent">{e.role}</p>
-                  <p className="font-mono text-xs uppercase tracking-widest text-on-ink/70">{e.when}</p>
+                  <h3 className="font-display text-3xl font-bold leading-tight">{e.role}</h3>
+                  <p className="mt-3 font-mono text-xs uppercase tracking-widest text-accent">{e.org}</p>
+                  <p className="mt-1 font-mono text-xs uppercase tracking-widest text-on-ink/70">{e.when}</p>
                 </div>
                 <ul className="space-y-2 text-on-ink/85">
                   {e.points.map((pt) => <li key={pt} className="flex gap-3"><span className="mt-2.5 h-1 w-3 shrink-0 bg-accent" aria-hidden />{pt}</li>)}
@@ -289,12 +317,12 @@ export default function Home() {
       {/* CONTACT */}
       <section id="contact" aria-labelledby="contact-h" className="relative scroll-mt-16 overflow-hidden border-t border-foreground/10">
         <Ambient />
-        <div className="relative mx-auto max-w-7xl px-5 py-24 md:px-8 md:py-32">
-          <Reveal>
+        <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 py-24 md:grid-cols-[minmax(0,1fr)_260px] md:gap-10 md:px-8 md:py-32 lg:grid-cols-[minmax(0,1fr)_300px]">
+          <Reveal className="min-w-0">
             <p className="font-mono text-xs uppercase tracking-[.25em] text-primary">End of the line. Or the next station.</p>
-            <h2 id="contact-h" className="font-display mt-4 max-w-4xl text-[clamp(2.5rem,7vw,5.5rem)] font-extrabold leading-[.95]">Have data nobody can find? <span className="font-serif font-normal italic text-primary">Let's talk.</span></h2>
-            <a href={`mailto:${CONTACT.email}`} data-testid="link-contact-email" className="mt-10 inline-flex items-center gap-3 break-all font-display text-2xl font-bold underline decoration-accent decoration-4 underline-offset-8 md:text-4xl">
-              <Mail className="h-7 w-7 shrink-0" aria-hidden />{CONTACT.email}
+            <h2 id="contact-h" className="font-display mt-4 max-w-4xl text-[clamp(2.5rem,6vw,5rem)] font-extrabold leading-[.95]">Have data nobody can find? <span className="font-serif font-normal italic text-primary">Let's talk.</span></h2>
+            <a href={`mailto:${CONTACT.email}`} data-testid="link-contact-email" className="mt-10 inline-flex max-w-full items-center gap-3 font-display text-xl font-bold underline decoration-accent decoration-4 underline-offset-8 lg:text-3xl">
+              <Mail className="h-6 w-6 shrink-0" aria-hidden /><span className="min-w-0 break-all">{CONTACT.email}</span>
             </a>
             <div className="mt-12 flex flex-wrap gap-3">
               <HoverButton href={CONTACT.linkedin} external icon="out" testId="button-contact-linkedin">LinkedIn</HoverButton>
@@ -302,6 +330,18 @@ export default function Home() {
               <HoverButton href={CONTACT.scholar} external icon="out" variant="line" testId="button-contact-scholar">Scholar</HoverButton>
               <HoverButton href={RESUME} download icon="down" variant="line" testId="button-contact-resume">Résumé PDF</HoverButton>
             </div>
+          </Reveal>
+          <Reveal className="mx-auto w-full max-w-[300px] md:mx-0">
+            <figure className="relative">
+              <div className="absolute -inset-2 -rotate-2 rounded-lg border border-primary/40 bg-secondary" aria-hidden />
+              <img src={img("je-portrait-closing.webp")}
+                srcSet={`${img("je-portrait-closing-small.webp")} 320w, ${img("je-portrait-closing.webp")} 640w`}
+                sizes="(min-width: 1024px) 300px, (min-width: 768px) 260px, 80vw"
+                width={640} height={800} loading="lazy" decoding="async"
+                alt="Je Sai Kailash Pulipati in a black shirt, looking to the side"
+                className="relative aspect-[4/5] w-full rounded-lg object-cover" data-testid="img-portrait-closing" />
+              <figcaption className="relative mt-4 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Je Sai Kailash Pulipati</figcaption>
+            </figure>
           </Reveal>
         </div>
       </section>

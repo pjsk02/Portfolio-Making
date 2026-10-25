@@ -1,5 +1,6 @@
 import { useId, useRef, useState } from "react";
 import { useActiveWhileVisible } from "@/components/prefs";
+import { MotionButton } from "@/components/site";
 
 const STAGES = [
   { k: "brief", label: "Brief", agent: -1,
@@ -30,8 +31,11 @@ export function AgentWorkshop() {
   return (
     <figure className="overflow-hidden rounded-2xl border border-foreground/12 bg-card" data-testid="workshop">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-foreground/10 px-4 py-3 md:px-6">
-        <p className="font-mono text-[11px] uppercase tracking-[.2em] text-muted-foreground">Fig. 2 · Agent workshop</p>
-        <p className="rounded-full border border-foreground/20 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-foreground/80" data-testid="text-workshop-label">Illustration, not running agents</p>
+        <div>
+          <p className="font-mono text-[11px] uppercase tracking-[.2em] text-muted-foreground">Fig. 2 · Agent workshop</p>
+          <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-foreground/70" data-testid="text-workshop-label">Illustration, not running agents</p>
+        </div>
+        <MotionButton testId="button-workshop-motion" />
       </div>
 
       <div className="grid md:grid-cols-[1.35fr_1fr]">
