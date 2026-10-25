@@ -28,16 +28,19 @@ jobs:
           cache: pnpm
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
-      - name: Install Chromium and its Linux dependencies
-        run: pnpm exec playwright install --with-deps chromium
+      - name: Install Chromium, Firefox, WebKit, and their Linux dependencies
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
       - name: Typecheck, bootstrap tests, and production browser regressions
         run: pnpm check
       - name: Run publishing-policy checks when included in the export
         run: pnpm --if-present run test:publishing
-      - name: Verify navigation on a subdirectory deployment
+      - name: Verify subdirectory navigation in all three engines
         env:
           PORTFOLIO_TEST_BASE_PATH: /portfolio/
-        run: pnpm test:browser tests/browser/navigation.spec.ts --project=desktop-dark --project=mobile-light
+        run: >-
+          pnpm test:browser tests/browser/navigation.spec.ts
+          --project=desktop-dark --project=mobile-light
+          --project=firefox-mobile-light --project=webkit-mobile-light
       - name: Retain failure diagnostics
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

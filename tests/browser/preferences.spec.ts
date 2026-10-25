@@ -1,6 +1,6 @@
-import { test, expect, openPage, expectTheme, seedPreferences } from "./fixtures";
+import { test, expect, openPage, expectTheme, expectFocusRing, seedPreferences } from "./fixtures";
 
-test("OS theme changes are followed until a keyboard choice is made and saved", async ({ page, colorScheme }) => {
+test("OS theme changes are followed until a keyboard choice is made and saved", { tag: "@compatibility" }, async ({ page, colorScheme }) => {
   const initial = colorScheme === "dark" ? "dark" : "light";
   const opposite = initial === "dark" ? "light" : "dark";
   await openPage(page);
@@ -14,6 +14,7 @@ test("OS theme changes are followed until a keyboard choice is made and saved", 
 
   await page.getByTestId("button-theme").focus();
   await page.keyboard.press("Enter");
+  await expectFocusRing(page.getByTestId("button-theme"));
   await expectTheme(page, opposite);
   expect(await page.evaluate(() => localStorage.getItem("je-theme"))).toBe(opposite);
   await page.emulateMedia({ colorScheme: opposite });
@@ -24,7 +25,7 @@ test("OS theme changes are followed until a keyboard choice is made and saved", 
 });
 
 for (const saved of ["light", "dark"] as const) {
-  test(`saved ${saved} wins over preview and changing OS settings`, async ({ page }) => {
+  test(`saved ${saved} wins over preview and changing OS settings`, { tag: "@compatibility" }, async ({ page }) => {
     const opposite = saved === "dark" ? "light" : "dark";
     await seedPreferences(page, { "je-theme": saved });
     await page.emulateMedia({ colorScheme: opposite });

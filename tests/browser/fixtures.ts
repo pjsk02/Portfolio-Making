@@ -81,10 +81,13 @@ export async function expectMotion(page: Page, paused: boolean, system = false) 
   }
 }
 
-export async function expectFocusRing(control: Locator) {
+export async function expectFocusRing(control: Locator, ring: Locator = control) {
   await expect(control).toBeFocused();
-  await expect(control).toHaveCSS("outline-style", "solid");
-  expect(await control.evaluate((el) => Number.parseFloat(getComputedStyle(el).outlineWidth))).toBeGreaterThanOrEqual(2);
+  await expect.poll(() => control.evaluate((el) => el.matches(":focus-visible"))).toBe(true);
+  await expect(ring).toBeVisible();
+  await expect(ring).toHaveCSS("outline-style", "solid");
+  await expect(ring).not.toHaveCSS("outline-color", /^(transparent|rgba\([^)]*,\s*0\))$/);
+  expect(await ring.evaluate((el) => Number.parseFloat(getComputedStyle(el).outlineWidth))).toBeGreaterThanOrEqual(2);
 }
 
 export async function expectAnchor(page: Page, id: string, behavior: ScrollBehavior) {

@@ -1,6 +1,6 @@
 import { test, expect, openPage, expectAnchor, expectFocusRing, navigationLink, seedPreferences } from "./fixtures";
 
-test("skip link is the first keyboard stop and moves focus into main", async ({ page }) => {
+test("skip link is the first keyboard stop and moves focus into main", { tag: "@compatibility" }, async ({ page }) => {
   await seedPreferences(page, { "je-motion": "paused" });
   await openPage(page);
   await page.keyboard.press("Tab");
@@ -10,7 +10,7 @@ test("skip link is the first keyboard stop and moves focus into main", async ({ 
   await expect(page).toHaveURL(/#main$/);
 });
 
-test("mobile menu Escape closes it and restores the trigger's focus", async ({ page, viewport }) => {
+test("mobile menu Escape closes it and restores the trigger's focus", { tag: "@compatibility" }, async ({ page, viewport }) => {
   test.skip(viewport!.width >= 1024, "Desktop primary navigation has no disclosure menu.");
   await openPage(page);
   const trigger = page.getByTestId("button-menu");
@@ -31,7 +31,7 @@ test("mobile menu Escape closes it and restores the trigger's focus", async ({ p
 });
 
 for (const paused of [false, true]) {
-  test(`same-page section links close the menu and focus/scroll with motion ${paused ? "paused" : "on"}`, async ({ page }) => {
+  test(`same-page section links close the menu and focus/scroll with motion ${paused ? "paused" : "on"}`, { tag: "@compatibility" }, async ({ page }) => {
     if (paused) await seedPreferences(page, { "je-motion": "paused" });
     await openPage(page);
     const link = await navigationLink(page, "workshop");
@@ -48,7 +48,7 @@ for (const paused of [false, true]) {
   });
 }
 
-test("direct and encoded hash navigation, reload, and hashchange jump without smooth motion", async ({ page }) => {
+test("direct and encoded hash navigation, reload, and hashchange jump without smooth motion", { tag: "@compatibility" }, async ({ page }) => {
   await openPage(page, "./#station%2D03");
   await expectAnchor(page, "station-03", "instant");
   await page.reload();
@@ -62,7 +62,7 @@ test("direct and encoded hash navigation, reload, and hashchange jump without sm
   await expect(page.getByTestId("button-theme")).toBeVisible();
 });
 
-test("cross-route section links and browser Back/Forward restore anchor focus", async ({ page }) => {
+test("cross-route section links and browser Back/Forward restore anchor focus", { tag: "@compatibility" }, async ({ page }) => {
   await seedPreferences(page, { "je-motion": "paused" });
   await openPage(page, "./work");
   const homeSection = await navigationLink(page, "story");
@@ -79,7 +79,7 @@ test("cross-route section links and browser Back/Forward restore anchor focus", 
   await expectAnchor(page, "workshop", "instant");
 });
 
-test("plain same-page anchors and OS-reduced navigation move focus without motion", async ({ page }) => {
+test("plain same-page anchors and OS-reduced navigation move focus without motion", { tag: "@compatibility" }, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openPage(page);
   await page.getByTestId("link-route-0").focus();

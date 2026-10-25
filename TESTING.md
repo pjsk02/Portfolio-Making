@@ -7,14 +7,28 @@ is imported by the application or copied into a production build.
 
 ```sh
 pnpm --filter @workspace/je-portfolio run test:unit
+pnpm --filter @workspace/je-portfolio exec playwright install firefox webkit
 pnpm --filter @workspace/je-portfolio run check
 ```
 
 The first command runs only the fast, dependency-free bootstrap tests. `check`
 typechecks the application **and tests**, then runs the bootstrap and browser
-suites. The supplied Replit Chromium is detected automatically. Elsewhere,
-install Chromium once with `pnpm exec playwright install chromium` from the app
-directory (on Linux CI, use `--with-deps`).
+suites. The supplied Replit Chromium is detected automatically, **only for
+Chromium projects**. Firefox and WebKit always use Playwright's version-matched
+builds; install them once as shown above. On a supported Linux host, install the
+required system libraries with `pnpm exec playwright install --with-deps
+chromium firefox webkit` from the app directory. A missing browser or library is
+a setup failure, not a skipped compatibility check.
+
+Some Replit workspaces have only the supplied Chromium and do not permit
+Playwright's Ubuntu system-package installer. In that case, run the Chromium
+slice locally and use the exported GitHub workflow for the full three-engine
+result; do not weaken the matrix, substitute Chromium for another engine, or
+change publishing dependencies just to make the browser installer work:
+
+```sh
+pnpm --filter @workspace/je-portfolio exec playwright test --project='desktop-*' --project='mobile-*' --project='narrow-mobile-*'
+```
 
 The browser suite creates a fresh production build, checks its CSP and size
 budgets, starts a temporary loopback-only server on port 4175, and stops it when
@@ -25,25 +39,31 @@ The server refuses to reuse an occupied port, so stale code cannot pass a check.
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm exec playwright install chromium
+pnpm exec playwright install --with-deps chromium firefox webkit
 pnpm check
 ```
 
 Use `pnpm test:unit` for bootstrap only, or `pnpm test:browser` for the production
-browser suite. To run one changed flow:
+browser suite in all configured engines. For just the focused Firefox/WebKit
+matrix, run `pnpm test:browser:compat` (in the workspace, prefix with
+`pnpm --filter @workspace/je-portfolio run`). To run one changed flow:
 
 ```sh
 pnpm test:browser tests/browser/motion.spec.ts --project=mobile-dark
+pnpm test:browser tests/browser/workshop.spec.ts --project=webkit-mobile-light
+pnpm test:browser tests/browser/navigation.spec.ts --project=firefox-desktop-dark
 ```
 
 To check a subdirectory build:
 
 ```sh
-PORTFOLIO_TEST_BASE_PATH=/portfolio/ pnpm test:browser tests/browser/navigation.spec.ts
+PORTFOLIO_TEST_BASE_PATH=/portfolio/ pnpm test:browser tests/browser/navigation.spec.ts --project=desktop-dark --project=mobile-light --project=firefox-mobile-light --project=webkit-mobile-light
 ```
 
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select an already-installed Chromium.
-By default, outside Replit, Playwright uses its version-matched browser.
+It is never passed to Firefox or WebKit. By default, outside Replit, Playwright
+also uses its version-matched Chromium. Do not substitute a stock Firefox or
+Safari binary: those do not expose Playwright's required automation protocol.
 The tests do not need secrets, an API server, real user data, or external sites.
 
 ## Coverage
@@ -53,14 +73,39 @@ The tests do not need secrets, an API server, real user data, or external sites.
 | `public/preferences.js` | Executes the real file in Node's VM before React: light/dark OS defaults; saved theme before preview before OS; invalid/empty values; absent `matchMedia`; blocked storage access and reads; saved pause and OS reduced-motion precedence. |
 | `src/components/prefs.tsx` | Live OS theme changes before/after explicit saved or in-visit choices; preview choice is not saved; reload persistence; blocked storage reads, writes, and property access; all motion switches stay synchronized; reduced motion never overwrites user intent. |
 | `src/components/site.tsx` | Theme button keyboard operation and accessible state; disabled motion switch under OS reduction; skip link; mobile-menu Escape and focus restoration; same-hash repeat clicks; native anchors; cross-route navigation; initial/encoded/bad hashes; Back/Forward; actual scroll destination below the sticky header; smooth versus instant scrolling. |
-| `src/components/workshop.tsx` | Tab into/out of the native radio group, all arrow directions and wraparound, exactly one checked radio, visible focus on the label, 44px labels, live explanatory text and SVG state; review switch with Space/Enter; interactions still work while paused. |
+| `src/components/workshop.tsx` | Tab into/out of a shared-name native radio group, all arrow directions and wraparound, Space selection, exactly one checked radio, visible focus on the label, 44px labels, live explanatory text and SVG state; review switch with Space/Enter; interactions still work while paused. |
 | Motion and mobile delivery | Actual CSS animation pause/resume, offscreen observer behavior, hidden-tab event handling, immediate reveal visibility under reduced motion, and no horizontal overflow at the workshop. |
 
-Every browser scenario runs in **light and dark** at **1280×900, 390×844, and
-320×740**. Only the menu-specific scenario is skipped on desktop, where that
-menu intentionally does not exist. Each test has an isolated browser context.
-The suite fails on uncaught errors, console errors, CSP violations, unexpected
-third-party requests, or failed assertions. There are no automatic retries.
+### Engine matrix
+
+| Engine | Projects / viewports | Scenarios |
+| --- | --- | --- |
+| Chromium | `desktop-light`, `desktop-dark` (1280×900); `mobile-light`, `mobile-dark` (390×844); `narrow-mobile-light`, `narrow-mobile-dark` (320×740) | Full suite, unchanged matrix. |
+| Firefox | `firefox-desktop-dark` (1280×900); `firefox-mobile-light` (390×844) | Only the shared scenarios tagged `@compatibility`. |
+| Playwright WebKit | `webkit-desktop-dark` (1280×900); `webkit-mobile-light` (390×844) | The same `@compatibility` scenarios as Firefox. |
+
+The focused tag covers live OS theme changes, saved light/dark precedence and
+reloads, keyboard theme selection/focus, shared saved motion switches, OS reduced
+motion with/without saved intent, native workshop radio navigation, review-switch
+Space/Enter activation, focus-visible rings, skip links, menu Escape, and the
+entire anchor/hash navigation suite (including Back/Forward and smooth/instant
+scrolling). These are the **same assertions** used in Chromium, not duplicated
+smoke tests. Broader invalid/blocked-storage, preview-only theme, and synthetic
+hidden/offscreen cases remain Chromium-only to limit CI cost.
+
+Only the menu-specific scenario is skipped on desktop, where that menu
+intentionally does not exist; there are no Firefox/WebKit-specific skips or
+relaxed assertions. Each test has an isolated browser context. The suite fails
+on uncaught errors, console errors, CSP violations, unexpected third-party
+requests, or failed assertions. There are no automatic retries. All projects
+share two workers and an **eight-minute global test limit**, with 30 seconds per
+test, seven seconds per assertion, and two minutes for production-server startup.
+
+**WebKit coverage is not Safari-device certification.** CI runs Playwright's
+patched Linux WebKit, not the Safari app on macOS or iOS. Mobile projects change
+viewport width and theme; they are not iPhone/iPad hardware, touch, browser-chrome,
+OS keyboard-navigation settings, or VoiceOver tests. Firefox coverage likewise
+uses Playwright's patched desktop Firefox, not Firefox for Android.
 
 The visibility test supplies the browser's `visibilitychange` event and hidden
 property deterministically; it verifies the real provider/CSS response, not
@@ -97,10 +142,14 @@ with `pnpm install --lockfile-only` inside the generated export, then verify
 `pnpm install --frozen-lockfile` before updating the review branch.
 
 The exported `.github/workflows/portfolio-checks.yml` runs on pull requests,
-pushes, and manual requests. It runs the full suite, any included publishing-policy
-tests, and a focused subdirectory navigation pass. It does not deploy or merge anything, does not retain checkout
-credentials, and only uploads failure diagnostics for seven days. All action
-revisions are pinned.
+pushes, and manual requests. It installs all three engines and their Linux
+dependencies, runs the full Chromium plus focused Firefox/WebKit suite and any
+included publishing-policy tests, then a subdirectory navigation pass in
+Chromium desktop/dark and mobile/light plus Firefox/WebKit mobile/light. All
+engines reuse the same production server, CSP, and unchanged delivery budgets.
+The job has a **15-minute limit** and cancels superseded runs on the same ref.
+It does not deploy or merge anything, does not retain checkout credentials, and
+only uploads failure diagnostics for seven days. All action revisions are pinned.
 
 Builds, traces, screenshots, and HTML reports live under
 `generated-artifacts/tests/`, ignored by Git and deployment. Open a failed run's

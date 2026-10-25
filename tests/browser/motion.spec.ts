@@ -1,6 +1,6 @@
 import { test, expect, openPage, expectMotion, seedPreferences } from "./fixtures";
 
-test("motion switches share a saved pause, stop CSS loops, and leave controls working", async ({ page }) => {
+test("motion switches share a saved pause, stop CSS loops, and leave controls working", { tag: "@compatibility" }, async ({ page }) => {
   await openPage(page, "./#workshop");
   await expectMotion(page, false);
   const workshop = page.locator("svg.workshop");
@@ -33,7 +33,7 @@ test("motion switches share a saved pause, stop CSS loops, and leave controls wo
 });
 
 for (const saved of ["full", "paused"] as const) {
-  test(`OS reduced motion overrides saved ${saved} without overwriting user intent`, async ({ page }) => {
+  test(`OS reduced motion overrides saved ${saved} without overwriting user intent`, { tag: "@compatibility" }, async ({ page }) => {
     await seedPreferences(page, { "je-motion": saved });
     await page.emulateMedia({ reducedMotion: "reduce" });
     await openPage(page, "./#workshop");
@@ -58,7 +58,7 @@ for (const saved of ["full", "paused"] as const) {
   });
 }
 
-test("an OS-only reduced-motion preference is not mistaken for a saved pause", async ({ page }) => {
+test("an OS-only reduced-motion preference is not mistaken for a saved pause", { tag: "@compatibility" }, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openPage(page);
   await expectMotion(page, true, true);

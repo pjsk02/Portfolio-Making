@@ -1,12 +1,16 @@
 import { test, expect, openPage, expectFocusRing, seedPreferences } from "./fixtures";
 
-test("workshop radios and human review work with Tab, arrows, Space, and Enter", async ({ page }) => {
+test("native workshop radios and human review work with Tab, arrows, Space, and Enter", { tag: "@compatibility" }, async ({ page }) => {
   await seedPreferences(page, { "je-motion": "paused" });
   await openPage(page, "./#workshop");
   const workshop = page.getByTestId("workshop");
   const illustration = workshop.getByRole("img");
   const radios = workshop.getByRole("radio");
   await expect(radios).toHaveCount(4);
+  await expect(workshop.locator('input[type="radio"]')).toHaveCount(4);
+  const names = await radios.evaluateAll((elements) => elements.map((el) => (el as HTMLInputElement).name));
+  expect(names[0]).not.toBe("");
+  expect(new Set(names).size, "Native arrow navigation needs one shared radio name").toBe(1);
   await expect(workshop.getByRole("group", { name: "Turn Je's dial" })).toBeVisible();
 
   // Enter the group through sequential keyboard navigation, not a mouse click.
@@ -34,10 +38,21 @@ test("workshop radios and human review work with Tab, arrows, Space, and Enter",
     await expect(page.getByTestId("text-workshop-explain")).toContainText(agent);
     // The actual radio is visually hidden; its label must show keyboard focus.
     const labelElement = radio.locator("..");
-    await expect(labelElement).toHaveCSS("outline-style", "solid");
-    expect(await labelElement.evaluate((el) => parseFloat(getComputedStyle(el).outlineWidth))).toBeGreaterThanOrEqual(2);
+    await expectFocusRing(radio, labelElement);
     expect((await labelElement.boundingBox())!.height).toBeGreaterThanOrEqual(44);
   }
+  // Space selects a focused native radio without a custom key handler. Return
+  // to Check with an arrow so Tab/Shift+Tab must use the group's checked member.
+  await brief.focus();
+  await page.keyboard.press("Space");
+  await expect(brief).toBeChecked();
+  await expect(illustration).toHaveAttribute("data-stage", "brief");
+  await expect(page.getByTestId("text-workshop-explain")).toContainText("Je, at the console");
+  await expect(workshop.locator('input[type="radio"]:checked')).toHaveCount(1);
+  await expectFocusRing(brief, brief.locator(".."));
+  await page.keyboard.press("ArrowLeft");
+  await expect(workshop.getByRole("radio", { name: "Check", exact: true })).toBeChecked();
+  await expect(illustration).toHaveAttribute("data-stage", "check");
   await expect(page.getByTestId("text-workshop-explain")).toHaveAttribute("aria-live", "polite");
   await page.keyboard.press("Tab");
   const review = workshop.getByRole("switch", { name: "Human review" });
@@ -50,6 +65,8 @@ test("workshop radios and human review work with Tab, arrows, Space, and Enter",
   await expect(illustration).toHaveAccessibleName(/Human review is off/);
   await page.keyboard.press("Enter");
   await expect(review).toHaveAttribute("aria-checked", "true");
+  await expect(illustration).toHaveAttribute("data-review", "on");
+  await expectFocusRing(review);
   await expect(page.getByTestId("text-workshop-explain")).toContainText("Human review is on");
   await expect(illustration).toHaveAccessibleName(/Human review is on/);
   await page.keyboard.press("Shift+Tab");

@@ -16,7 +16,7 @@ pnpm dev
 
 ```sh
 pnpm typecheck
-pnpm exec playwright install chromium
+pnpm exec playwright install chromium firefox webkit
 pnpm check
 pnpm test:publishing
 pnpm build
@@ -29,9 +29,11 @@ For a subdirectory deployment, set `BASE_PATH` when building.
 No backend, API keys, database, or authentication service is required.
 
 The regression suite checks preferences, keyboard controls, motion, and hash
-navigation in both themes at desktop and mobile widths against a production
-build. GitHub pull requests and pushes run it automatically. See `TESTING.md`
-for focused commands, coverage, failure reports, and delivery budgets.
+navigation against a production build. Chromium runs the full theme/width matrix;
+Firefox and Playwright WebKit run focused desktop/dark and mobile-width/light
+compatibility checks. WebKit is engine coverage, not certification on physical
+Safari devices. GitHub pull requests and pushes run all three engines. See
+`TESTING.md` for focused commands, coverage, failure reports, and delivery budgets.
 The included `.replit` selects static hosting with real response headers and
 explicit project-page rewrites. It does not run the Vite development server.
 See `PUBLISHING.md` before a release: `publishing.json` must use a verified
