@@ -83,7 +83,8 @@ export async function expectMotion(page: Page, paused: boolean, system = false) 
 
 export async function expectFocusRing(control: Locator, ring: Locator = control) {
   await expect(control).toBeFocused();
-  await expect.poll(() => control.evaluate((el) => el.matches(":focus-visible"))).toBe(true);
+  // Assert the visible result, not an engine's :focus-visible heuristic. WebKit
+  // can omit that pseudo-class after arrowing between native radio inputs.
   await expect(ring).toBeVisible();
   await expect(ring).toHaveCSS("outline-style", "solid");
   await expect(ring).not.toHaveCSS("outline-color", /^(transparent|rgba\([^)]*,\s*0\))$/);

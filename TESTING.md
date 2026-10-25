@@ -104,6 +104,12 @@ scrolling). These are the **same assertions** used in Chromium, not duplicated
 smoke tests. Broader invalid/blocked-storage, preview-only theme, and synthetic
 hidden/offscreen cases remain Chromium-only to limit CI cost.
 
+Radio labels show their ring whenever the hidden native input is focused:
+WebKit can clear `:focus-visible` during native arrow-key selection. The shared
+assertions require actual focus plus a visible, solid, nontransparent ring at
+least two pixels wide, rather than requiring one engine's focus heuristic.
+Native Tab/arrow/Space behavior is unchanged; there are no custom key handlers.
+
 Only the menu-specific scenario is skipped on desktop, where that menu
 intentionally does not exist; there are no Firefox/WebKit-specific skips or
 relaxed assertions. Each test has an isolated browser context. The suite fails
