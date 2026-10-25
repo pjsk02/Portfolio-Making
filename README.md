@@ -34,6 +34,8 @@ Firefox and Playwright WebKit run focused desktop/dark and mobile-width/light
 compatibility checks. WebKit is engine coverage, not certification on physical
 Safari devices. GitHub pull requests and pushes run all three engines. See
 `TESTING.md` for focused commands, coverage, failure reports, and delivery budgets.
+Browser checks also need OpenSSL for a temporary local HTTPS certificate; the
+GitHub Ubuntu runner already includes it. No test keys are committed or shipped.
 The included `.replit` selects static hosting with real response headers and
 explicit project-page rewrites. It does not run the Vite development server.
 See `PUBLISHING.md` before a release: `publishing.json` must use a verified

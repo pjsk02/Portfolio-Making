@@ -6,7 +6,7 @@ const basePath = process.env.PORTFOLIO_TEST_BASE_PATH || "/";
 if (!/^\/(?:[\w-]+\/)*$/.test(basePath)) {
   throw new Error("PORTFOLIO_TEST_BASE_PATH must be / or a path such as /portfolio/.");
 }
-const baseURL = `http://127.0.0.1:${port}${basePath}`;
+const baseURL = `https://127.0.0.1:${port}${basePath}`;
 const chromiumExecutablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ||
   (existsSync("/repl/tools/bin/chromium") ? "/repl/tools/bin/chromium" : undefined);
 
@@ -59,6 +59,9 @@ export default defineConfig({
   ],
   use: {
     baseURL,
+    // Only the loopback regression server uses a short-lived self-signed cert.
+    // The production CSP, including upgrade-insecure-requests, stays untouched.
+    ignoreHTTPSErrors: true,
     reducedMotion: "no-preference",
     serviceWorkers: "block",
     trace: "retain-on-failure",
@@ -70,8 +73,10 @@ export default defineConfig({
     // Never reuse a server that could be serving stale code or a relaxed CSP.
     command: "node tests/support/production-server.mjs",
     url: baseURL,
+    ignoreHTTPSErrors: true,
     env: { NODE_ENV: "production", PORT: String(port), BASE_PATH: basePath },
     reuseExistingServer: false,
+    gracefulShutdown: { signal: "SIGTERM", timeout: 5_000 },
     timeout: 120_000,
     stdout: "pipe",
     stderr: "pipe",

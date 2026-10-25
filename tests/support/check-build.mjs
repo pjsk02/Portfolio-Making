@@ -16,8 +16,8 @@ async function filesUnder(directory, prefix = "") {
 
 export async function checkBuild(directory) {
   const files = await filesUnder(directory);
-  assert(!files.some((file) => /(^|\/)(tests|node_modules|\.github|playwright-report|test-results)(\/|$)|\.map$/.test(file)),
-    "Production output must not contain tests, reports, dependencies, or source maps");
+  assert(!files.some((file) => /(^|\/)(tests|node_modules|\.github|playwright-report|test-results)(\/|$)|\.(map|pem|key|crt)$/.test(file)),
+    "Production output must not contain tests, reports, dependencies, source maps, or test TLS material");
 
   const html = await readFile(path.join(directory, "index.html"), "utf8");
   const cspTag = html.match(/<meta\b[^>]*http-equiv="Content-Security-Policy"[^>]*>/i)?.[0];
@@ -41,6 +41,8 @@ export async function checkBuild(directory) {
   for (const name of ["object-src", "frame-src", "worker-src", "form-action"]) {
     assert.equal(directives.get(name), "'none'", `${name} must remain blocked`);
   }
+  assert(directives.has("upgrade-insecure-requests"),
+    "Keep the production HTTPS upgrade directive; the test server must support it");
   for (const [, attributes, body] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
     assert.match(attributes, /\bsrc="(?!https?:|\/\/)[^"]+"/, "Scripts must be local external files");
     assert.equal(body.trim(), "", "Inline executable scripts must remain forbidden");

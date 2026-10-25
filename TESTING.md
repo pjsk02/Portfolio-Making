@@ -31,9 +31,20 @@ pnpm --filter @workspace/je-portfolio exec playwright test --project='desktop-*'
 ```
 
 The browser suite creates a fresh production build, checks its CSP and size
-budgets, starts a temporary loopback-only server on port 4175, and stops it when
-finished. It does not use, replace, or weaken the managed development preview.
-The server refuses to reuse an occupied port, so stale code cannot pass a check.
+budgets, starts a temporary **HTTPS** loopback-only server on port 4175, and stops
+it when finished. It does not use, replace, or weaken the managed development
+preview. The server refuses to reuse an occupied port, so stale code cannot pass
+a check.
+
+Browser checks also require **OpenSSL** (included on the GitHub Ubuntu runner).
+The server generates a fresh one-day loopback certificate in an ignored temporary
+directory outside the served build, reads it into memory, and removes the files
+before listening. Only the test browser contexts and readiness probe accept this
+self-signed certificate.
+WebKit upgrades loopback asset URLs under the existing
+`upgrade-insecure-requests` CSP directive, so HTTP alone is not an equivalent
+cross-engine test. No CSP directive is removed, no browser CSP bypass is enabled,
+and no certificate, key, or TLS setting is added to the published site.
 
 ## Run the standalone GitHub export
 
@@ -117,8 +128,8 @@ physical-device FPS, RAM, or full assistive-technology certification.
 The browser tests exercise the production CSP without `bypassCSP`, inline-script
 exceptions, eval, external fonts, or development plugins. Before serving, the
 suite checks that the policy precedes scripts, preferences precede the React
-entry, the generated header template remains intact, and tests/source maps
-have not leaked into the site.
+entry, the generated header template and HTTPS upgrade directive remain intact,
+and tests/source maps/test certificates have not leaked into the site.
 
 Budgets sum **all** emitted JS/CSS, including `preferences.js` and font CSS:
 
