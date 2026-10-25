@@ -316,6 +316,10 @@ body { background: hsl(var(--background)); transition: background-color .3s ease
 .js-reveal .reveal.in { opacity: 1; transform: none; }
 
 /* ---------- Workshop illustration ---------- */
+.ws-stage-choice {
+  @apply flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 text-[12px];
+}
+.ws-stage-choice:focus-within { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
 .workshop { --w-ink: hsl(var(--foreground)); overflow: visible; }
 .workshop .ws-target, .workshop .ws-cable-hit { cursor: pointer; touch-action: manipulation; }
 .workshop .ws-target { outline: none; } /* Use geometry-shaped keyboard rings, not SVG bounding boxes. */

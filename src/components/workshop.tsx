@@ -216,7 +216,7 @@ export function AgentWorkshop() {
                 Keep the visible label outlined whenever its hidden input has focus. */}
             <div className="mt-3 grid grid-cols-2 gap-2">
               {STAGES.map((st, i) => (
-                <label key={st.k} className={`flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 font-mono text-[12px] uppercase tracking-wider transition-colors has-[:focus]:outline has-[:focus]:outline-2 has-[:focus]:outline-offset-2 has-[:focus]:outline-ring ${i === stage ? "border-foreground bg-foreground text-background" : "border-foreground/25 hover:border-foreground"}`}>
+                <label key={st.k} className={`ws-stage-choice font-mono tracking-wider transition-colors uppercase ${i === stage ? "border-foreground bg-foreground text-background" : "border-foreground/25 hover:border-foreground"}`}>
                   <input type="radio" name={`${uid}stage`} value={st.k} checked={i === stage} onChange={() => setStage(i)} className="sr-only" data-testid={`radio-workshop-${st.k}`} />
                   <span aria-hidden className="text-[10px] opacity-60">{String(i + 1).padStart(2, "0")}</span>{st.label}
                 </label>
