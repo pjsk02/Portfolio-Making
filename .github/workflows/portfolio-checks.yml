@@ -1,0 +1,50 @@
+name: Portfolio regression checks
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+# Review untrusted PR code without write permissions, secrets, or deployment.
+permissions:
+  contents: read
+
+concurrency:
+  group: portfolio-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Chromium and its Linux dependencies
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Typecheck, bootstrap tests, and production browser regressions
+        run: pnpm check
+      - name: Run publishing-policy checks when included in the export
+        run: pnpm --if-present run test:publishing
+      - name: Verify navigation on a subdirectory deployment
+        env:
+          PORTFOLIO_TEST_BASE_PATH: /portfolio/
+        run: pnpm test:browser tests/browser/navigation.spec.ts --project=desktop-dark --project=mobile-light
+      - name: Retain failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: portfolio-regression-failures
+          path: |
+            generated-artifacts/tests/report/
+            generated-artifacts/tests/results/
+          retention-days: 7
+          if-no-files-found: ignore

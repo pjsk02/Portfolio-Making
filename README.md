@@ -16,6 +16,8 @@ pnpm dev
 
 ```sh
 pnpm typecheck
+pnpm exec playwright install chromium
+pnpm check
 pnpm test:publishing
 pnpm build
 pnpm preview
@@ -25,6 +27,11 @@ The production site is generated in `dist/`. Serve it with an SPA fallback
 to `index.html` so direct links to project pages work.
 For a subdirectory deployment, set `BASE_PATH` when building.
 No backend, API keys, database, or authentication service is required.
+
+The regression suite checks preferences, keyboard controls, motion, and hash
+navigation in both themes at desktop and mobile widths against a production
+build. GitHub pull requests and pushes run it automatically. See `TESTING.md`
+for focused commands, coverage, failure reports, and delivery budgets.
 The included `.replit` selects static hosting with real response headers and
 explicit project-page rewrites. It does not run the Vite development server.
 See `PUBLISHING.md` before a release: `publishing.json` must use a verified
@@ -44,6 +51,8 @@ omitted rather than pointing visitors to the wrong site.
 - `PUBLISHING.md`: release steps, boundaries, and live verification.
 - `SECURITY.md`: security scope, hosting configuration, and verification.
 - `UX-NOTES.md`: design references, rationale, and measured performance changes.
+- `tests/`, `playwright.config.ts`, `TESTING.md`: development-only regression checks.
+- `.github/workflows/portfolio-checks.yml`: read-only checks for the review branch.
 
 Contact actions open email or the linked public profiles. There is no
 background message-delivery service.

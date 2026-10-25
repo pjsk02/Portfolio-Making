@@ -42,6 +42,8 @@
   "include": [
     "src",
     "build",
+    "tests",
+    "playwright.config.ts",
     "vite.config.ts"
   ],
   "exclude": [
