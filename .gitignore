@@ -5,3 +5,9 @@ dist/
 .env.*
 !.env.example
 .DS_Store
+.local/
+.cache/
+.agents/
+.conversation/
+.pythonlibs/
+generated-artifacts/

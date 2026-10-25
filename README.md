@@ -35,6 +35,10 @@ No backend, API keys, database, or authentication service is required.
 Contact actions open email or the linked public profiles. There is no
 background message-delivery service.
 
+The repository's original starter folders may also be present. They are
+preserved rather than deleted; the standalone portfolio commands above run
+the application in the root `src/` directory.
+
 ## Content boundaries
 
 The stealth-startup case is anonymous. Its months-to-days improvement refers
