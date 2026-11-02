@@ -51,6 +51,8 @@ omitted rather than pointing visitors to the wrong site.
 - `index.html`: default metadata.
 - `build/security.ts`: production content policy and header template.
 - `build/publishing.ts`: crawler-visible route metadata and Replit hosting rules.
+- `vercel.json`: Vercel headers and rewrites, generated from `vercelConfig()` in
+  `build/publishing.ts`; `pnpm test:publishing` fails if the two drift.
 - `publishing.json`: the verified production origin, initially unset.
 - `PUBLISHING.md`: release steps, boundaries, and live verification.
 - `SECURITY.md`: security scope, hosting configuration, and verification.

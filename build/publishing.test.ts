@@ -5,7 +5,7 @@ import path from "node:path";
 import { test } from "node:test";
 import { build } from "vite";
 import { escapeHtml, metadataForPath, PUBLIC_ROUTES, renderMetadata, validateSiteUrl } from "../src/metadata.ts";
-import { portfolioPublishing, replitHostingRules, routeFile, standaloneReplitConfig } from "./publishing.ts";
+import { portfolioPublishing, replitHostingRules, routeFile, standaloneReplitConfig, vercelConfig } from "./publishing.ts";
 import { contentSecurityPolicy, portfolioSecurity, responseHeaders } from "./security.ts";
 import { checkHeaders, checkHtmlMetadata, verifyPublishedSite } from "./verify-published.ts";
 
@@ -76,6 +76,19 @@ test("Replit static rules cover route variants, preserve fallback, and do not re
   }
   assert.ok(rules.endsWith('from = "/*"\nto = "/index.html"\n'));
   assert.ok(!rules.includes("_headers"));
+});
+
+test("Vercel rules match the policy source, cover route variants, and keep the SPA fallback last", () => {
+  const config = vercelConfig();
+  assert.deepEqual(JSON.parse(readFileSync(new URL("../vercel.json", import.meta.url), "utf8")), config,
+    "vercel.json has drifted from build/security.ts or the project routes.");
+  assert.deepEqual(Object.fromEntries(config.headers[0].headers.map(({ key, value }) => [key, value])), responseHeaders);
+  for (const route of PUBLIC_ROUTES.slice(1)) {
+    for (const source of [route, `${route}/`]) {
+      assert.ok(config.rewrites.some((rule) => rule.source === source && rule.destination === `/${routeFile(route)}`));
+    }
+  }
+  assert.deepEqual(config.rewrites.at(-1), { source: "/(.*)", destination: "/index.html" });
 });
 
 test("verification rejects a generic home shell for a direct project share", () => {

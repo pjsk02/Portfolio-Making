@@ -23,6 +23,27 @@ export function standaloneReplitConfig(): string {
   return `# Static portfolio only; no API or development server is published.\nmodules = ["nodejs-24"]\n\n[deployment]\ndeploymentTarget = "static"\nbuild = ["pnpm", "build"]\npublicDir = "dist"\n\n${replitHostingRules()}`;
 }
 
+// Vercel reads vercel.json from the repository root, so it is committed rather
+// than emitted into dist. The test suite fails if it drifts from this source.
+export function vercelConfig() {
+  return {
+    $schema: "https://openapi.vercel.sh/vercel.json",
+    framework: "vite",
+    buildCommand: "pnpm build",
+    outputDirectory: "dist",
+    headers: [{
+      source: "/(.*)",
+      headers: Object.entries(responseHeaders).map(([key, value]) => ({ key, value })),
+    }],
+    // Static files take precedence over rewrites on Vercel.
+    rewrites: [
+      ...PUBLIC_ROUTES.filter((route) => route !== "/").flatMap((route) =>
+        [route, `${route}/`].map((source) => ({ source, destination: `/${routeFile(route)}` }))),
+      { source: "/(.*)", destination: "/index.html" },
+    ],
+  };
+}
+
 export function portfolioPublishing(): Plugin {
   let siteUrl: string | null = null;
   let basePath = "/";
